@@ -2,10 +2,59 @@ spring:
   application:
     name: kcloak
 
+  flyway:
+    baseline-on-migrate: true
+    locations: classpath:migrations
+    url: jdbc:postgresql://localhost:5432/kcloak
+    password: kcloak
+    user: kcloak
+
   datasource:
     url: jdbc:postgresql://localhost:5432/kcloak
     username: kcloak
     password: kcloak
-realms:
-  records:
-    - realm:
+
+realm:
+  name: test1
+  enabled: true
+  access-token-lifespan: 900
+  refresh-token-lifespan: 1800
+  users:
+    - username: super-admin
+      email: superadmin@test1.com
+      enabled: true
+      first-name: super
+      last-name: admin
+      password: superadmin
+
+    - username: user1-test1
+      email: user1@test1.com
+      enabled: true
+      first-name: user1
+      last-name: test1
+      password: 123
+
+    - username: user2-test1
+      email: user2@test1.com
+      enabled: true
+      first-name: user2
+      last-name: test1
+      password: 123
+
+  groups:
+    - name: access
+      realm-roles:
+        - sadmin
+
+  roles:
+    - name: sadmin
+      permissions:
+        - READ_REALM_USERS
+        - WRITE_REALM_USERS
+
+  clients:
+    - client-id: default
+      client-secret: secret
+      client-scopes:
+        - openid
+        - microprofile-jwt
