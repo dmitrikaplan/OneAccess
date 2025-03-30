@@ -1,8 +1,6 @@
 package ru.kaplaan.kcloak.config.properties
 
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.transaction.annotation.Transactional
-import ru.kaplaan.kcloak.jooq.tables.records.RoleRecord
 
 @ConfigurationProperties(prefix = "realm")
 data class RealmProperties(
