@@ -41,11 +41,6 @@ realm:
       last-name: test1
       password: 123
 
-  groups:
-    - name: access
-      realm-roles:
-        - sadmin
-
   roles:
     - name: sadmin
       permissions:
