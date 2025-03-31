@@ -4,10 +4,10 @@ import org.springframework.boot.context.event.ApplicationReadyEvent
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
-import ru.kaplaan.kcloak.service.PermissionService
-import ru.kaplaan.kcloak.service.RoleService
-import ru.kaplaan.kcloak.service.UserService
-import ru.kaplaan.kcloak.service.ClientService
+import ru.kaplaan.kcloak.service.core.PermissionService
+import ru.kaplaan.kcloak.service.core.RoleService
+import ru.kaplaan.kcloak.service.core.UserService
+import ru.kaplaan.kcloak.service.core.ClientService
 
 @Component
 class RealmPropertiesValidator(
@@ -21,7 +21,7 @@ class RealmPropertiesValidator(
     @EventListener(ApplicationReadyEvent::class)
     @Transactional
     fun initRealmProperties() {
-        validateRealmProperties()
+        //validateRealmProperties()
     }
 
     fun validateRealmProperties() {

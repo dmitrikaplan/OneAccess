@@ -32,5 +32,5 @@ data class OneAccessClient(
     val clientId: String,
     val clientSecret: String,
     val enabled: Boolean,
-    val clientScopes: Set<String>
+    val clientScopes: Set<SupportedScopes>
 )

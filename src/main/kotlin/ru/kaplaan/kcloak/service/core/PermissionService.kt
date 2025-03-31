@@ -1,4 +1,4 @@
-package ru.kaplaan.kcloak.service
+package ru.kaplaan.kcloak.service.core
 
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
