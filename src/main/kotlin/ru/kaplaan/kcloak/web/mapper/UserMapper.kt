@@ -8,8 +8,8 @@ fun OneAccessUser.toRecord(): UsersRecord {
         this.username = this@toRecord.username
         this.email = this@toRecord.email
         this.enabled = this@toRecord.enabled
-        this.firstName = this.firstName
-        this.lastName = this.lastName
+        this.firstName = this@toRecord.firstName
+        this.lastName = this@toRecord.lastName
         this.password = this@toRecord.password
     }
 }

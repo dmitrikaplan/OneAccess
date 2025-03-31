@@ -137,6 +137,10 @@
             <artifactId>flyway-core</artifactId>
             <version>${flyway.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-database-postgresql</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -223,6 +227,16 @@
                         <location>classpath:migrations</location>
                     </locations>
                 </configuration>
+
+                <executions>
+                    <execution>
+                        <id>flyway-migrate</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>migrate</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <dependencies>
                     <dependency>
                         <groupId>org.flywaydb</groupId>

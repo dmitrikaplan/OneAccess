@@ -14,7 +14,7 @@ class PermissionDao(
 
     fun save(permission: PermissionRecord) {
         db.insertInto(PERMISSION)
-            .values(permission)
+            .set(permission)
             .onConflictDoNothing()
             .execute()
     }
@@ -30,7 +30,7 @@ class PermissionDao(
 
     fun saveAllRolePermission(rolePermissions: Set<RolePermissionRecord>) {
         db.insertInto(ROLE_PERMISSION)
-            .values(rolePermissions)
+            .set(rolePermissions)
             .onConflictDoNothing()
             .execute()
     }

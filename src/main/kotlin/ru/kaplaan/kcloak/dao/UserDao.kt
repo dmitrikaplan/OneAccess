@@ -10,12 +10,6 @@ class UserDao(
     private val db: DSLContext
 ) {
 
-    fun findByUsername(username: String): UsersRecord? {
-        return db.selectFrom(USERS)
-            .where(USERS.USERNAME.eq(username))
-            .fetchOne()
-    }
-
     fun findByEmail(email: String): UsersRecord? {
         return db.selectFrom(USERS)
             .where(USERS.EMAIL.eq(email))
@@ -24,7 +18,7 @@ class UserDao(
 
     fun create(user: UsersRecord): UsersRecord? {
         return db.insertInto(USERS)
-            .values(user)
+            .set(user)
             .returningResult()
             .fetchOneInto(UsersRecord::class.java)
     }

@@ -5,10 +5,11 @@ import org.springframework.transaction.annotation.Transactional
 import ru.kaplaan.kcloak.config.properties.OneAccessClient
 import ru.kaplaan.kcloak.dao.ClientDao
 import ru.kaplaan.kcloak.jooq.tables.records.ClientRecord
+import ru.kaplaan.kcloak.web.mapper.toRecord
 
 @Service
 class ClientService(
-    private val clientDao: ClientDao
+    private val clientDao: ClientDao,
 ) {
 
     @Transactional
@@ -18,15 +19,16 @@ class ClientService(
             create(client)
         else
             update(client, checkNotNull(clientByClientId.id))
-
     }
 
     fun create(client: OneAccessClient) {
-        //TODO:
+        val clientRecord = client.toRecord()
+        clientDao.create(clientRecord)
     }
 
     fun update(client: OneAccessClient, clientId: Long) {
-        //TODO:
+        val clientRecord = client.toRecord()
+        clientDao.update(clientRecord, clientId)
     }
 
     fun findClientByClientId(clientId: String): ClientRecord? {

@@ -14,14 +14,14 @@ class RoleDao(
 
     fun saveRole(role: RoleRecord): RoleRecord? {
         return db.insertInto(ROLE)
-            .values(role)
+            .set(role)
             .returningResult()
             .fetchOneInto(RoleRecord::class.java)
     }
 
     fun saveAllRoleUser(roleUsers: Set<RoleUserRecord>) {
         db.insertInto(ROLE_USER)
-            .values(roleUsers)
+            .set(roleUsers)
             .onConflictDoNothing()
             .execute()
     }

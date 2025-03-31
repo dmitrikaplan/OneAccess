@@ -1,6 +1,6 @@
 create table users(
     id bigserial primary key,
-    username text not null unique,
+    username text not null,
     email text not null unique,
     enabled bool not null,
     first_name text not null,

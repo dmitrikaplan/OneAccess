@@ -3,6 +3,7 @@ spring:
     name: kcloak
 
   flyway:
+    enabled: true
     baseline-on-migrate: true
     locations: classpath:migrations
     url: jdbc:postgresql://localhost:5432/kcloak
@@ -26,6 +27,8 @@ realm:
       first-name: super
       last-name: admin
       password: superadmin
+      roles:
+        - sadmin
 
     - username: user1-test1
       email: user1@test1.com
@@ -33,6 +36,8 @@ realm:
       first-name: user1
       last-name: test1
       password: 123
+      roles:
+        - user
 
     - username: user2-test1
       email: user2@test1.com
@@ -40,16 +45,22 @@ realm:
       first-name: user2
       last-name: test1
       password: 123
+      roles:
+        - user
 
   roles:
     - name: sadmin
       permissions:
         - READ_REALM_USERS
         - WRITE_REALM_USERS
+    - name: user
+      permissions:
+        - USER
 
   clients:
     - client-id: default
       client-secret: secret
+      enabled: true
       client-scopes:
         - openid
         - microprofile-jwt
