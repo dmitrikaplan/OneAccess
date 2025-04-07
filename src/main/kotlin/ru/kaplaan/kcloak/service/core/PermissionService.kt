@@ -28,6 +28,4 @@ class PermissionService(
 
         permissionDao.saveAllRolePermission(rolesToPermission)
     }
-
-
 }

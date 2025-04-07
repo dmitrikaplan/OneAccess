@@ -1,9 +1,12 @@
 package ru.kaplaan.kcloak.dao
 
 import org.jooq.DSLContext
+import org.jooq.impl.DSL.trueCondition
 import org.springframework.stereotype.Component
 import ru.kaplaan.kcloak.jooq.tables.records.ClientRecord
+import ru.kaplaan.kcloak.jooq.tables.records.PermissionRecord
 import ru.kaplaan.kcloak.jooq.tables.references.CLIENT
+import ru.kaplaan.kcloak.jooq.tables.references.PERMISSION
 import ru.kaplaan.kcloak.jooq.tables.references.USERS
 
 @Component
@@ -30,6 +33,12 @@ class ClientDao(
             .set(clientRecord)
             .where(USERS.ID.eq(clientId))
             .execute()
+    }
+
+    fun getAll(): List<ClientRecord> {
+        return db.selectFrom(CLIENT)
+            .where(trueCondition())
+            .fetchInto(ClientRecord::class.java)
     }
 
 }

@@ -1,8 +1,11 @@
 package ru.kaplaan.kcloak.dao
 
 import org.jooq.DSLContext
+import org.jooq.impl.DSL.trueCondition
 import org.springframework.stereotype.Component
+import ru.kaplaan.kcloak.jooq.tables.records.PermissionRecord
 import ru.kaplaan.kcloak.jooq.tables.records.UsersRecord
+import ru.kaplaan.kcloak.jooq.tables.references.PERMISSION
 import ru.kaplaan.kcloak.jooq.tables.references.USERS
 
 @Component
@@ -24,10 +27,16 @@ class UserDao(
     }
 
 
-    fun update(user: UsersRecord, userId: Long){
+    fun update(user: UsersRecord, userId: Long) {
         db.update(USERS)
             .set(user)
             .where(USERS.ID.eq(userId))
             .execute()
+    }
+
+    fun getAll(): MutableList<UsersRecord> {
+        return db.selectFrom(USERS)
+            .where(trueCondition())
+            .fetchInto(UsersRecord::class.java)
     }
 }

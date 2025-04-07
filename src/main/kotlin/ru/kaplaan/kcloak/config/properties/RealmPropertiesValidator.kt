@@ -11,7 +11,7 @@ import ru.kaplaan.kcloak.service.core.ClientService
 
 @Component
 class RealmPropertiesValidator(
-    private val realmProperties: RealmProperties,
+    private val oneAccessProperties: OneAccessProperties,
     private val userService: UserService,
     private val roleService: RoleService,
     private val permissionService: PermissionService,
@@ -21,26 +21,24 @@ class RealmPropertiesValidator(
     @EventListener(ApplicationReadyEvent::class)
     @Transactional
     fun initRealmProperties() {
-        //validateRealmProperties()
+        validateRealmProperties()
     }
 
     fun validateRealmProperties() {
+        oneAccessProperties.realms.forEach{ (realmName, realm) ->
 
-        val permissions = realmProperties.roles.map { it.permissions }.flatten()
-        for (permission in permissions) {
-            permissionService.save(permission)
+            for(role in realm.roles) {
+                roleService.saveRole(role)
+            }
+
+            for (user in realm.users) {
+                userService.save(user)
+            }
+
+            for(client in realm.clients) {
+                clientService.save(client)
+            }
         }
 
-        for(role in realmProperties.roles) {
-            roleService.saveRole(role)
-        }
-
-        for (user in realmProperties.users) {
-            userService.save(user)
-        }
-
-        for(client in realmProperties.clients) {
-            clientService.save(client)
-        }
     }
 }

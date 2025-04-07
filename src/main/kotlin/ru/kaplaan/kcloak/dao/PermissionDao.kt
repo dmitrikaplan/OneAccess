@@ -1,6 +1,8 @@
 package ru.kaplaan.kcloak.dao
 
+import org.jooq.Condition
 import org.jooq.DSLContext
+import org.jooq.impl.DSL.trueCondition
 import org.springframework.stereotype.Component
 import ru.kaplaan.kcloak.jooq.tables.records.PermissionRecord
 import ru.kaplaan.kcloak.jooq.tables.records.RolePermissionRecord
@@ -33,6 +35,13 @@ class PermissionDao(
             .set(rolePermissions)
             .onConflictDoNothing()
             .execute()
+    }
+
+
+    fun getAll(): List<PermissionRecord> {
+        return db.selectFrom(PERMISSION)
+            .where(trueCondition())
+            .fetchInto(PermissionRecord::class.java)
     }
 
 }

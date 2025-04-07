@@ -1,6 +1,7 @@
 package ru.kaplaan.kcloak.dao
 
 import org.jooq.DSLContext
+import org.jooq.impl.DSL.trueCondition
 import org.springframework.stereotype.Component
 import ru.kaplaan.kcloak.jooq.tables.records.RoleRecord
 import ru.kaplaan.kcloak.jooq.tables.records.RoleUserRecord
@@ -37,5 +38,11 @@ class RoleDao(
         return db.selectFrom(ROLE)
             .where(ROLE.NAME.eq(roleName))
             .fetchOne()
+    }
+
+    fun getAll(): List<RoleRecord> {
+        return db.selectFrom(ROLE)
+            .where(trueCondition())
+            .fetchInto(RoleRecord::class.java)
     }
 }

@@ -2,8 +2,12 @@ package ru.kaplaan.kcloak.config.properties
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 
-@ConfigurationProperties(prefix = "realm")
-data class RealmProperties(
+@ConfigurationProperties("one-access")
+data class OneAccessProperties(
+    val realms: Map<String, OneAccessRealm>
+)
+
+data class OneAccessRealm(
     val name: String,
     val enabled: Boolean,
     val accessTokenLifespan: Int,
@@ -32,5 +36,5 @@ data class OneAccessClient(
     val clientId: String,
     val clientSecret: String,
     val enabled: Boolean,
-    val clientScopes: Set<SupportedScopes>
+    val clientScopes: Set<String>
 )

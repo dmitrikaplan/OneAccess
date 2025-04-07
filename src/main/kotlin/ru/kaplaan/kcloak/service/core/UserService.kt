@@ -19,9 +19,9 @@ class UserService(
 
     @Transactional
     fun save(user: OneAccessUser){
-        val userByUsername = findByEmail(user.email)
-        if (userByUsername != null) {
-            update(user, checkNotNull(userByUsername.id))
+        val userByEmail = findByEmail(user.email)
+        if (userByEmail != null) {
+            update(user, checkNotNull(userByEmail.id))
         } else {
             create(user)
         }

@@ -23,7 +23,6 @@ class RoleService(
         } else checkNotNull(roleByName.id)
 
         permissionService.bindPermissionsToRole(role.permissions, roleId)
-
     }
 
     @Transactional

@@ -21,8 +21,10 @@ class PublicController(
     }
 
     @PostMapping("/realms/{realm}/protocol/openid-connect/auth")
-    fun authorization(@PathVariable realm: String) {
-        //TODO: authorization code flow
+    fun authorization(
+        @PathVariable realm: String
+    ) {
+        //TODO: authorization
     }
 
     @PostMapping("/realms/{realm}/protocol/openid-connect/token")
