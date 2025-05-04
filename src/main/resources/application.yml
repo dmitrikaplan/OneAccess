@@ -1,16 +1,14 @@
 spring:
   application:
     name: kcloak
-  profiles:
-    active: default, realm
 
-  flyway:
-    enabled: true
-    baseline-on-migrate: true
-    locations: classpath:migrations
-    url: jdbc:postgresql://localhost:5432/kcloak
-    password: kcloak
-    user: kcloak
+#  flyway:
+#    enabled: true
+#    baseline-on-migrate: true
+#    locations: classpath:migrations
+#    url: jdbc:postgresql://localhost:5432/kcloak
+#    password: kcloak
+#    user: kcloak
 
   datasource:
     url: jdbc:postgresql://localhost:5432/kcloak

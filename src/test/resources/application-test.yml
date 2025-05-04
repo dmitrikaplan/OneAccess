@@ -1,18 +1,13 @@
 spring:
   application:
-    name: kcloak
-  profiles:
-    active: default, realm
+    name: one-access
 
   flyway:
     enabled: true
-    baseline-on-migrate: true
     locations: classpath:migrations
-    url: jdbc:postgresql://localhost:5432/kcloak
-    password: kcloak
-    user: kcloak
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/kcloak
-    username: kcloak
-    password: kcloak
+    url: jdbc:tc:postgresql:17://localhost:5435/test
+    username: postgres
+    password: postgres
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver

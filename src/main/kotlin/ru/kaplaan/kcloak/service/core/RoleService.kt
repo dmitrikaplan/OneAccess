@@ -6,7 +6,10 @@ import ru.kaplaan.kcloak.config.properties.OneAccessRole
 import ru.kaplaan.kcloak.dao.RoleDao
 import ru.kaplaan.kcloak.jooq.tables.records.RoleRecord
 import ru.kaplaan.kcloak.jooq.tables.records.RoleUserRecord
+import ru.kaplaan.kcloak.web.mapper.toOneAccessRole
 import ru.kaplaan.kcloak.web.mapper.toRecord
+
+private const val pageSize = 10
 
 @Service
 class RoleService(
@@ -41,4 +44,16 @@ class RoleService(
     fun findRoleByRoleName(roleName: String): RoleRecord? {
         return roleDao.findRoleByName(roleName)
     }
+
+    fun findByUserId(userId: Long): Set<String> {
+        return roleDao.findByUserId(userId).mapNotNull { it.name }.toSet()
+    }
+
+    fun findAll(pageNumber: Int): List<OneAccessRole> {
+        return roleDao.findAll(pageNumber, pageSize).map { role ->
+            val permissions = permissionService.getPermissionsByRoleName(checkNotNull(role.name))
+            role.toOneAccessRole(permissions)
+        }.distinct()
+    }
+
 }

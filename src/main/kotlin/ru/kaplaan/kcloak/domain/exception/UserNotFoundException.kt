@@ -5,8 +5,8 @@ import org.springframework.security.oauth2.core.OAuth2Error
 
 
 class UserNotFoundException(
-    description: String,
+    userId: Long?,
 ) : OAuth2Exception(
-    oauth2Error = OAuth2Error("not found", description, null),
+    oauth2Error = OAuth2Error("not found", "user with id $userId not found", null),
     httpStatus = HttpStatus.BAD_REQUEST
 )

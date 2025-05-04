@@ -6,8 +6,13 @@ enum class SupportedScopes(val value: String) {
     PROFILE("profile"), ROLES("roles"), MICROPROFILE_JWT("microprofile-jwt");
 
     companion object {
-        fun getSupportedScopes(): Set<String> {
-            return entries.map { it.value }.toSet()
+
+        private fun fromString(value: String): SupportedScopes? {
+            return entries.find { it.value.lowercase() == value.lowercase() }
+        }
+
+        fun fromString(values: Set<String>): Set<SupportedScopes> {
+            return values.mapNotNull { fromString(it) }.toSet()
         }
     }
 

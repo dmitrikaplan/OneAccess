@@ -1,51 +1,54 @@
 one-access:
-  realms:
-    test1:
+  enabled: true
+  access-token-lifespan: 900
+  refresh-token-lifespan: 1800
+  users:
+    - username: super-admin
+      email: superadmin@test1.com
       enabled: true
-      access-token-lifespan: 900
-      refresh-token-lifespan: 1800
-      users:
-        - username: super-admin
-          email: superadmin@test1.com
-          enabled: true
-          first-name: super
-          last-name: admin
-          password: superadmin
-          roles:
-            - sadmin
-
-        - username: user1-test1
-          email: user1@test1.com
-          enabled: true
-          first-name: user1
-          last-name: test1
-          password: 123
-          roles:
-            - user
-
-        - username: user2-test1
-          email: user2@test1.com
-          enabled: true
-          first-name: user2
-          last-name: test1
-          password: 123
-          roles:
-            - user
-
+      first-name: super
+      last-name: admin
+      password: superadmin
       roles:
-        - name: sadmin
-          permissions:
-            - READ_REALM_USERS
-            - WRITE_REALM_USERS
-        - name: user
-          permissions:
-            - USER
+        - sadmin
 
-      clients:
-        - client-id: default
-          client-secret: secret
-          enabled: true
-          client-scopes:
-            - openid
-            - microprofile-jwt
+    - username: user1-test1
+      email: user1@test1.com
+      enabled: true
+      first-name: user1
+      last-name: test1
+      password: 123
+      roles:
+        - user
+
+    - username: user2-test1
+      email: user2@test1.com
+      enabled: true
+      first-name: user2
+      last-name: test1
+      password: 123
+      roles:
+        - user
+
+  roles:
+    - name: sadmin
+      permissions:
+        - READ_REALM_USERS
+        - WRITE_REALM_USERS
+    - name: user
+      permissions:
+        - USER
+
+  clients:
+    - client-id: default
+      client-secret: secret
+      client-name: test-client
+      client-authentication-methods:
+        - value: client_secret_jwt
+      authorization-grant-types:
+        - value: authorization_code
+      redirect-uris: http://localhost:5000
+      scopes:
+        - OPENID
+        - MICROPROFILE_JWT
 

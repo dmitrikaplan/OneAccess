@@ -1,14 +1,14 @@
 package ru.kaplaan.kcloak.config.properties
 
 import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.security.oauth2.core.AuthorizationGrantType
+import org.springframework.security.oauth2.core.ClientAuthenticationMethod
+import org.springframework.security.oauth2.server.authorization.settings.ClientSettings
+import org.springframework.security.oauth2.server.authorization.settings.TokenSettings
+import java.time.Instant
 
 @ConfigurationProperties("one-access")
 data class OneAccessProperties(
-    val realms: Map<String, OneAccessRealm>
-)
-
-data class OneAccessRealm(
-    val name: String,
     val enabled: Boolean,
     val accessTokenLifespan: Int,
     val refreshTokenLifespan: Int,
@@ -35,6 +35,13 @@ data class OneAccessRole(
 data class OneAccessClient(
     val clientId: String,
     val clientSecret: String,
-    val enabled: Boolean,
-    val clientScopes: Set<String>
+    val clientSecretExpiresAt: Instant? = null,
+    val clientName: String,
+    val clientAuthenticationMethods: Set<ClientAuthenticationMethod>,
+    val authorizationGrantTypes: Set<AuthorizationGrantType>,
+    val redirectUris: Set<String>,
+    val postLogoutRedirectUris: Set<String> = setOf(),
+    val scopes: Set<SupportedScopes>,
+    val clientSettings: ClientSettings = ClientSettings.builder().build(),
+    val tokenSettings: TokenSettings = TokenSettings.builder().build(),
 )

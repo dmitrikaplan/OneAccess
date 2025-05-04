@@ -13,3 +13,15 @@ fun OneAccessUser.toRecord(): UsersRecord {
         this.password = this@toRecord.password
     }
 }
+
+fun UsersRecord.toOneAccessUser(roles: Set<String>): OneAccessUser {
+    return OneAccessUser(
+        username = checkNotNull(this.username),
+        email = checkNotNull(this.email),
+        enabled = checkNotNull(this.enabled),
+        firstName = checkNotNull(this.firstName),
+        lastName = checkNotNull(this.lastName),
+        password = checkNotNull(this.password),
+        roles = roles
+    )
+}

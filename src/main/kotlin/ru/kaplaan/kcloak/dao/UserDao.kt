@@ -1,11 +1,8 @@
 package ru.kaplaan.kcloak.dao
 
 import org.jooq.DSLContext
-import org.jooq.impl.DSL.trueCondition
 import org.springframework.stereotype.Component
-import ru.kaplaan.kcloak.jooq.tables.records.PermissionRecord
 import ru.kaplaan.kcloak.jooq.tables.records.UsersRecord
-import ru.kaplaan.kcloak.jooq.tables.references.PERMISSION
 import ru.kaplaan.kcloak.jooq.tables.references.USERS
 
 @Component
@@ -34,9 +31,17 @@ class UserDao(
             .execute()
     }
 
-    fun getAll(): MutableList<UsersRecord> {
+    fun findByUserId(userId: Long): UsersRecord? {
         return db.selectFrom(USERS)
-            .where(trueCondition())
+            .where(USERS.ID.eq(userId))
+            .fetchOneInto(UsersRecord::class.java)
+    }
+
+    fun getAll(pageNumber: Int, pageSize: Int): List<UsersRecord> {
+        val from = (pageNumber - 1) * pageSize
+        return db.selectFrom(USERS)
+            .offset(from)
+            .limit(pageSize)
             .fetchInto(UsersRecord::class.java)
     }
 }

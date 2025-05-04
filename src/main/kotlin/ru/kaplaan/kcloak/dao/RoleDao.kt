@@ -3,6 +3,7 @@ package ru.kaplaan.kcloak.dao
 import org.jooq.DSLContext
 import org.jooq.impl.DSL.trueCondition
 import org.springframework.stereotype.Component
+import ru.kaplaan.kcloak.domain.paging
 import ru.kaplaan.kcloak.jooq.tables.records.RoleRecord
 import ru.kaplaan.kcloak.jooq.tables.records.RoleUserRecord
 import ru.kaplaan.kcloak.jooq.tables.references.ROLE
@@ -43,6 +44,22 @@ class RoleDao(
     fun getAll(): List<RoleRecord> {
         return db.selectFrom(ROLE)
             .where(trueCondition())
+            .fetchInto(RoleRecord::class.java)
+    }
+
+    fun findByUserId(userId: Long): List<RoleRecord> {
+        return db.select(ROLE.NAME)
+            .from(ROLE_USER)
+            .join(ROLE).on(ROLE_USER.ROLE_ID.eq(ROLE.ID))
+            .where(ROLE_USER.USER_ID.eq(userId))
+            .fetchInto(RoleRecord::class.java)
+    }
+
+    fun findAll(pageNumber: Int, pageSize: Int): List<RoleRecord> {
+        return db.select(ROLE.ID, ROLE.NAME)
+            .from(ROLE)
+            .where(trueCondition())
+            .paging(pageNumber, pageSize)
             .fetchInto(RoleRecord::class.java)
     }
 }

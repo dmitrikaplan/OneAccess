@@ -8,3 +8,10 @@ fun OneAccessRole.toRecord(): RoleRecord {
         this.name = this@toRecord.name
     }
 }
+
+fun RoleRecord.toOneAccessRole(permissions: Set<String>): OneAccessRole {
+    return OneAccessRole(
+        name = checkNotNull(this.name),
+        permissions = permissions
+    )
+}
