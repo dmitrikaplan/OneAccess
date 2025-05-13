@@ -1,25 +1,39 @@
 package ru.kaplaan.kcloak.web.controller.admin
 
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.validation.annotation.Validated
+import org.springframework.web.bind.annotation.*
 import ru.kaplaan.kcloak.config.properties.OneAccessClient
 import ru.kaplaan.kcloak.service.core.ClientService
+import ru.kaplaan.kcloak.web.dto.ClientDto
 
 @RestController
 @RequestMapping("/admin/clients")
 class ClientController(
-    private val clientService: ClientService
+    private val clientService: ClientService,
 ) {
 
     @GetMapping("/{clientId}")
-    fun getClientById(@PathVariable clientId: String): OneAccessClient {
+    @PreAuthorize("hasAuthority('READ_CLIENTS')")
+    fun getClientById(@PathVariable clientId: String): ClientDto {
         return clientService.getClientByClientId(clientId)
     }
 
     @GetMapping("/all/{pageNumber}")
-    fun getAllClients(@PathVariable pageNumber: Int): List<OneAccessClient> {
+    @PreAuthorize("hasAuthority('READ_CLIENTS')")
+    fun getAllClients(@PathVariable pageNumber: Int): List<ClientDto> {
         return clientService.getAll(pageNumber)
+    }
+
+    @PostMapping
+    @PreAuthorize("hasAuthority('WRITE_CLIENTS')")
+    fun createClient(@RequestBody @Validated client: OneAccessClient): ClientDto {
+        return clientService.create(client)
+    }
+
+    @PutMapping("/{clientId}")
+    @PreAuthorize("hasAuthority('WRITE_USERS')")
+    fun updateClient(@RequestBody @Validated client: OneAccessClient, @PathVariable clientId: String): ClientDto {
+        return clientService.update(client, clientId)
     }
 }

@@ -59,6 +59,11 @@ CREATE UNIQUE INDEX idx_oauth2_registered_client_client_id
 
 
 insert into permission(name)
-values ('READ_REALM_USERS'),
-       ('WRITE_REALM_USERS'),
-       ('USER');
+values ('READ_USERS'),
+       ('WRITE_USERS'),
+       ('READ_CLIENTS'),
+       ('WRITE_CLIENTS'),
+       ('READ_SETTINGS'),
+       ('WRITE_SETTINGS'),
+       ('WRITE_ROLES'),
+       ('READ_ROLES');

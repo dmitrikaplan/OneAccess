@@ -4,55 +4,75 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import ru.kaplaan.kcloak.config.properties.OneAccessUser
 import ru.kaplaan.kcloak.dao.UserDao
-import ru.kaplaan.kcloak.domain.exception.UserNotFoundException
+import ru.kaplaan.kcloak.domain.exception.user.UserAlreadyExistsException
+import ru.kaplaan.kcloak.domain.exception.user.UserNotFoundException
 import ru.kaplaan.kcloak.jooq.tables.records.UsersRecord
-import ru.kaplaan.kcloak.web.mapper.toOneAccessUser
+import ru.kaplaan.kcloak.web.dto.User
+import ru.kaplaan.kcloak.web.dto.UserDto
 import ru.kaplaan.kcloak.web.mapper.toRecord
+import ru.kaplaan.kcloak.web.mapper.toUser
+import ru.kaplaan.kcloak.web.mapper.toUserDto
 
 private const val pageSize: Int = 10
 
 @Service
 class UserService(
     private val userDao: UserDao,
-    private val roleService: RoleService
+    private val roleService: RoleService,
+    private val permissionService: PermissionService,
 ) {
 
-    fun findByEmailAndRealm(email: String): UsersRecord? {
-        return userDao.findByEmail(email)
+    fun findByEmail(email: String): User? {
+        val user = userDao.findByEmail(email) ?: return null
+        return fetchAuthoritiesAndMap(user)
     }
 
     @Transactional
-    fun save(user: OneAccessUser) {
-        val userByEmail = findByEmailAndRealm(user.email)
+    fun save(oneAccessUser: OneAccessUser) {
+        val userByEmail = findByEmail(oneAccessUser.email)
         if (userByEmail != null) {
-            update(user, checkNotNull(userByEmail.id))
+            update(oneAccessUser, checkNotNull(userByEmail.id))
         } else {
-            create(user)
+            create(oneAccessUser)
         }
     }
 
-    private fun create(user: OneAccessUser) {
-        val userRecord = user.toRecord()
-        val userId = checkNotNull(userDao.create(userRecord)?.id)
-        roleService.bindRolesToUser(user.roles, userId)
+    @Transactional
+    fun create(oneAccessUser: OneAccessUser): UserDto {
+        if (findByEmail(oneAccessUser.email) != null)
+            throw UserAlreadyExistsException(oneAccessUser.email)
+
+        val userRecord = oneAccessUser.toRecord()
+        val savedUser = checkNotNull(userDao.create(userRecord))
+        roleService.bindRolesToUser(oneAccessUser.roles, checkNotNull(savedUser.id))
+
+        return savedUser.toUserDto()
     }
 
-    private fun update(user: OneAccessUser, userId: Long) {
+    fun update(user: OneAccessUser, userId: Long): UserDto {
         val userRecord = user.toRecord()
-        userDao.update(userRecord, userId)
+        val savedUser = checkNotNull(userDao.update(userRecord, userId))
         roleService.bindRolesToUser(user.roles, userId)
+        return savedUser.toUserDto()
     }
 
-    fun getByUserId(userId: Long): OneAccessUser {
+    fun getByUserId(userId: Long): UserDto {
         val userRecord = userDao.findByUserId(userId) ?: throw UserNotFoundException(userId)
-        val userRoles = roleService.findByUserId(userId)
-        return userRecord.toOneAccessUser(userRoles)
+        return userRecord.toUserDto()
     }
 
-    fun getAll(pageNumber: Int): List<OneAccessUser> {
+    fun getAll(pageNumber: Int): List<UserDto> {
         return userDao.getAll(pageNumber, pageSize).map { user ->
-            val roles = roleService.findByUserId(checkNotNull(user.id))
-            user.toOneAccessUser(roles)
+            user.toUserDto()
         }
+    }
+
+    private fun fetchAuthoritiesAndMap(user: UsersRecord): User {
+        val roles = roleService.getByUserId(checkNotNull(user.id))
+        val permissions = roles.flatMap {
+            permissionService.getPermissionsNamesByRoleName(it)
+        }.distinct()
+
+        return user.toUser(permissions.toSet(), roles)
     }
 }

@@ -1,9 +1,11 @@
 package ru.kaplaan.kcloak.config.properties
 
-enum class SupportedScopes(val value: String) {
+import org.springframework.security.oauth2.core.oidc.OidcScopes
 
-    OPENID("openid"), EMAIL("email"), PHONE("phone"),
-    PROFILE("profile"), ROLES("roles"), MICROPROFILE_JWT("microprofile-jwt");
+enum class SupportedScopes(val value: String) {
+    READ("read"), WRITE("write"), OPENID(OidcScopes.OPENID),
+    EMAIL(OidcScopes.EMAIL), PHONE(OidcScopes.PHONE), PROFILE(OidcScopes.PROFILE),
+    ADDRESS(OidcScopes.ADDRESS);
 
     companion object {
 

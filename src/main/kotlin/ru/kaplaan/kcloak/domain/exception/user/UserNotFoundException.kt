@@ -1,7 +1,8 @@
-package ru.kaplaan.kcloak.domain.exception
+package ru.kaplaan.kcloak.domain.exception.user
 
 import org.springframework.http.HttpStatus
 import org.springframework.security.oauth2.core.OAuth2Error
+import ru.kaplaan.kcloak.domain.exception.OAuth2Exception
 
 
 class UserNotFoundException(

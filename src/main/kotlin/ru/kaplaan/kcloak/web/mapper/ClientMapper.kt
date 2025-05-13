@@ -1,16 +1,19 @@
 package ru.kaplaan.kcloak.web.mapper
 
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient
+import org.springframework.security.oauth2.server.authorization.settings.ClientSettings
 import ru.kaplaan.kcloak.config.properties.OneAccessClient
 import ru.kaplaan.kcloak.config.properties.SupportedScopes
+import ru.kaplaan.kcloak.web.dto.ClientDto
 import java.time.Instant
+import java.util.*
 
 
 fun OneAccessClient.toRegisteredClient(): RegisteredClient =
-    RegisteredClient.withId(clientId)
+    RegisteredClient
+        .withId(UUID.nameUUIDFromBytes(clientId.toByteArray()).toString())
         .clientSecret(clientSecret)
         .clientId(clientId)
-        .clientIdIssuedAt(Instant.now())
         .clientSecretExpiresAt(clientSecretExpiresAt)
         .clientName(clientName)
         .also {
@@ -38,13 +41,37 @@ fun OneAccessClient.toRegisteredClient(): RegisteredClient =
                 it.scope(scope.value)
             }
         }
-        .clientSettings(clientSettings)
-        .tokenSettings(tokenSettings)
+        .also {
+            if(clientSettings != null) {
+                it.clientSettings(clientSettings.toClientSettings())
+            }
+        }
+        .also {
+            if(tokenSettings != null){
+                it.tokenSettings(tokenSettings.toTokenSettings())
+            }
+        }
         .build()
 
 
 fun RegisteredClient.toOneAccessClient(): OneAccessClient {
     return OneAccessClient(
+        clientId = clientId,
+        clientSecret = checkNotNull(clientSecret),
+        clientSecretExpiresAt = clientSecretExpiresAt,
+        clientName = clientName,
+        clientAuthenticationMethods = clientAuthenticationMethods,
+        authorizationGrantTypes = authorizationGrantTypes,
+        redirectUris = redirectUris,
+        scopes = SupportedScopes.fromString(scopes),
+        postLogoutRedirectUris = postLogoutRedirectUris,
+        clientSettings = clientSettings.toOneAccessClientSettings(),
+        tokenSettings = tokenSettings.toOneAccessTokenSettings(),
+    )
+}
+
+fun RegisteredClient.toClient(): ClientDto {
+    return ClientDto(
         clientId = clientId,
         clientSecret = checkNotNull(clientSecret),
         clientSecretExpiresAt = clientSecretExpiresAt,

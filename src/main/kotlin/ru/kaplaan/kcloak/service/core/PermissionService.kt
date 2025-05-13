@@ -11,7 +11,7 @@ class PermissionService(
 ) {
 
     @Transactional
-    fun bindPermissionsToRole(permissions: Set<String>, roleId: Long) {
+    fun updateRolePermissions(permissions: Set<String>, roleId: Long) {
         val permissionsIds = permissionDao.getPermissionIdsByPermissionNames(permissions)
         val rolesToPermission = permissionsIds.map { permissionId ->
             RolePermissionRecord().apply {
@@ -20,10 +20,20 @@ class PermissionService(
             }
         }.toSet()
 
+        val permissionsToRoleMapToDelete = getPermissionsIdsByRoleId(roleId) - permissionsIds.toSet()
+        deletePermissionsFromRole(permissionsToRoleMapToDelete.toSet())
         permissionDao.saveAllRolePermission(rolesToPermission)
     }
 
-    fun getPermissionsByRoleName(roleName: String): Set<String> {
+    fun getPermissionsIdsByRoleId(roleId: Long): List<Long> {
+        return permissionDao.getPermissionsIdsByRoleId()
+    }
+
+    fun getPermissionsNamesByRoleName(roleName: String): Set<String> {
         return permissionDao.getByRoleName(roleName).toSet()
+    }
+
+    private fun deletePermissionsFromRole(permissionsIds: Set<Long>) {
+        permissionDao.deletePermissionsFromRole(permissionsIds)
     }
 }

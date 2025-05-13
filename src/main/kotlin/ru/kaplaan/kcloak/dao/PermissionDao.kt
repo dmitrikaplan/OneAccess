@@ -46,4 +46,16 @@ class PermissionDao(
             .fetchInto(String::class.java)
     }
 
+    fun deletePermissionsFromRole(permissionsIds: Set<Long>) {
+        db.deleteFrom(ROLE_PERMISSION)
+            .where(ROLE_PERMISSION.PERMISSION_ID.`in`(permissionsIds))
+            .execute()
+    }
+
+    fun getPermissionsIdsByRoleId(): List<Long> {
+        return db.select(ROLE_PERMISSION.PERMISSION_ID)
+            .from(ROLE_PERMISSION)
+            .fetchInto(Long::class.java)
+    }
+
 }

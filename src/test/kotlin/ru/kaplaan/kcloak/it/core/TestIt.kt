@@ -10,7 +10,7 @@ import org.springframework.test.context.junit4.SpringRunner
 import ru.kaplaan.kcloak.config.TestConfig
 
 @RunWith(SpringRunner::class)
-@ActiveProfiles("test", "test-realm")
+@ActiveProfiles("test", "test-realm", "test-local")
 @SpringBootTest(
 //    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
     classes = [

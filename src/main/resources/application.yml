@@ -14,3 +14,10 @@ spring:
     url: jdbc:postgresql://localhost:5432/kcloak
     username: kcloak
     password: kcloak
+  profiles:
+    active: realm
+
+logging:
+  level:
+    org.springframework.security: TRACE
+    org.springframework.security.oauth2: TRACE

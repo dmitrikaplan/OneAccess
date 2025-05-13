@@ -16,6 +16,12 @@ class UserDao(
             .fetchOne()
     }
 
+    fun findByUsername(username: String): UsersRecord? {
+        return db.selectFrom(USERS)
+            .where(USERS.USERNAME.eq(username))
+            .fetchOne()
+    }
+
     fun create(user: UsersRecord): UsersRecord? {
         return db.insertInto(USERS)
             .set(user)
@@ -24,11 +30,12 @@ class UserDao(
     }
 
 
-    fun update(user: UsersRecord, userId: Long) {
-        db.update(USERS)
+    fun update(user: UsersRecord, userId: Long): UsersRecord? {
+        return db.update(USERS)
             .set(user)
             .where(USERS.ID.eq(userId))
-            .execute()
+            .returning()
+            .fetchOneInto(UsersRecord::class.java)
     }
 
     fun findByUserId(userId: Long): UsersRecord? {

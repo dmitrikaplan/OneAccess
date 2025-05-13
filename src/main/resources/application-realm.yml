@@ -1,7 +1,4 @@
 one-access:
-  enabled: true
-  access-token-lifespan: 900
-  refresh-token-lifespan: 1800
   users:
     - username: super-admin
       email: superadmin@test1.com
@@ -40,15 +37,39 @@ one-access:
         - USER
 
   clients:
-    - client-id: default
-      client-secret: secret
-      client-name: test-client
+    - client-id: "client1"
+      client-secret: "client1secret"
+      client-name: "test-client"
       client-authentication-methods:
         - value: client_secret_jwt
+        - value: client_secret_post
+        - value: client_secret_basic
       authorization-grant-types:
         - value: authorization_code
-      redirect-uris: http://localhost:5000
+        - value: refresh_token
+        - value: client_credentials
+      redirect-uris:
+        - "http://localhost:8080/"
+      post-logout-redirect-uris:
+        - "http://127.0.0.1:8080/"
+      client-settings:
+        require-authorization-consent: false
+        require-proof-key: false
       scopes:
-        - openid
-        - microprofile-jwt
+        - OPENID
+        - PROFILE
 
+    - client-id: "client2"
+      client-secret: "test-client"
+      client-name: "Test Client"
+      client-authentication-methods:
+        - value: client_secret_post
+        - value: client_secret_basic
+      authorization-grant-types:
+        - value: authorization_code
+        - value: refresh_token
+        - value: client_credentials
+      redirect-uris:
+        - "http://localhost:5000/code"
+      scopes:
+        - OPENID

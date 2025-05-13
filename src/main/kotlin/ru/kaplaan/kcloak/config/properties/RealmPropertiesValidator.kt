@@ -24,7 +24,6 @@ class RealmPropertiesValidator(
 
     fun validateRealmProperties() {
 
-
         for (role in oneAccessProperties.roles) {
             roleService.saveRole(role)
         }
@@ -33,7 +32,7 @@ class RealmPropertiesValidator(
             userService.save(user)
         }
 
-        for (client in oneAccessProperties.clients) {
+            for (client in oneAccessProperties.clients) {
             clientService.save(client)
         }
     }

@@ -3,18 +3,14 @@ package ru.kaplaan.kcloak.config.properties
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.security.oauth2.core.AuthorizationGrantType
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod
-import org.springframework.security.oauth2.server.authorization.settings.ClientSettings
-import org.springframework.security.oauth2.server.authorization.settings.TokenSettings
+import java.time.Duration
 import java.time.Instant
 
 @ConfigurationProperties("one-access")
 data class OneAccessProperties(
-    val enabled: Boolean,
-    val accessTokenLifespan: Int,
-    val refreshTokenLifespan: Int,
     val users: Set<OneAccessUser> = setOf(),
     val roles: Set<OneAccessRole> = setOf(),
-    val clients: Set<OneAccessClient> = setOf()
+    val clients: Set<OneAccessClient> = setOf(),
 )
 
 data class OneAccessUser(
@@ -24,12 +20,12 @@ data class OneAccessUser(
     val firstName: String,
     val lastName: String,
     val password: String,
-    val roles: Set<String> = setOf()
+    val roles: Set<String> = setOf(),
 )
 
 data class OneAccessRole(
     val name: String,
-    val permissions: Set<String>
+    val permissions: Set<String>,
 )
 
 data class OneAccessClient(
@@ -41,7 +37,20 @@ data class OneAccessClient(
     val authorizationGrantTypes: Set<AuthorizationGrantType>,
     val redirectUris: Set<String>,
     val postLogoutRedirectUris: Set<String> = setOf(),
-    val scopes: Set<SupportedScopes>,
-    val clientSettings: ClientSettings = ClientSettings.builder().build(),
-    val tokenSettings: TokenSettings = TokenSettings.builder().build(),
+    val scopes: Set<SupportedScopes> = setOf(),
+    val clientSettings: OneAccessClientSettings?,
+    val tokenSettings: OneAccessTokenSettings?,
+)
+
+
+data class OneAccessClientSettings(
+    val requireAuthorizationConsent: Boolean,
+    val requireProofKey: Boolean,
+)
+
+class OneAccessTokenSettings(
+    val accessTokenLifespan: Duration = Duration.ofMinutes(15),
+    val refreshTokenLifespan: Duration = Duration.ofMinutes(60),
+    val authorizationCodeLifespan: Duration = Duration.ofMinutes(15),
+    val reuseRefreshTokens: Boolean = false,
 )

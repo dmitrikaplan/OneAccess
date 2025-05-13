@@ -62,4 +62,12 @@ class RoleDao(
             .paging(pageNumber, pageSize)
             .fetchInto(RoleRecord::class.java)
     }
+
+    fun updateRole(role: RoleRecord, roleId: Long): RoleRecord? {
+        return db.update(ROLE)
+            .set(role)
+            .where(ROLE.ID.eq(roleId))
+            .returning()
+            .fetchOneInto(RoleRecord::class.java)
+    }
 }
