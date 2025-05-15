@@ -24,7 +24,7 @@ class UserService(
 
     fun findByEmail(email: String): User? {
         val user = userDao.findByEmail(email) ?: return null
-        return fetchAuthoritiesAndMap(user)
+        return fetchAuthoritiesAndMapToUser(user)
     }
 
     @Transactional
@@ -46,28 +46,28 @@ class UserService(
         val savedUser = checkNotNull(userDao.create(userRecord))
         roleService.updateUserRoles(oneAccessUser.roles, checkNotNull(savedUser.id))
 
-        return savedUser.toUserDto()
+        return fetchAuthoritiesAndMapToUserDto(savedUser)
     }
 
     fun update(user: OneAccessUser, userId: Long): UserDto {
         val userRecord = user.toRecord()
         val savedUser = checkNotNull(userDao.update(userRecord, userId))
         roleService.updateUserRoles(user.roles, userId)
-        return savedUser.toUserDto()
+        return fetchAuthoritiesAndMapToUserDto(savedUser)
     }
 
     fun getByUserId(userId: Long): UserDto {
         val userRecord = userDao.findByUserId(userId) ?: throw UserNotFoundException(userId)
-        return userRecord.toUserDto()
+        return fetchAuthoritiesAndMapToUserDto(userRecord)
     }
 
     fun getAll(pageNumber: Int): List<UserDto> {
         return userDao.getAll(pageNumber, pageSize).map { user ->
-            user.toUserDto()
+            fetchAuthoritiesAndMapToUserDto(user)
         }
     }
 
-    private fun fetchAuthoritiesAndMap(user: UsersRecord): User {
+    private fun fetchAuthoritiesAndMapToUser(user: UsersRecord): User {
         val roles = roleService.getByUserId(checkNotNull(user.id))
         val permissions = roles.flatMap {
             permissionService.getPermissionsNamesByRoleName(it)
@@ -75,4 +75,10 @@ class UserService(
 
         return user.toUser(permissions.toSet(), roles)
     }
+
+    private fun fetchAuthoritiesAndMapToUserDto(user: UsersRecord): UserDto {
+        val roles = roleService.getByUserId(checkNotNull(user.id))
+        return user.toUserDto(roles)
+    }
+
 }

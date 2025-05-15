@@ -43,10 +43,10 @@ class RoleService(
     @Transactional
     fun createRole(role: OneAccessRole): RoleDto {
         val roleRecord = role.toRecord()
-        if(findRoleByRoleName(role.name) != null)
+        if (findRoleByRoleName(role.name) != null)
             throw RoleAlreadyExistsException(role.name)
 
-       val savedRoleRecord = checkNotNull(roleDao.saveRole(roleRecord))
+        val savedRoleRecord = checkNotNull(roleDao.saveRole(roleRecord))
 
         return savedRoleRecord.toRoleDto(role.permissions)
     }
@@ -72,6 +72,12 @@ class RoleService(
         return roleDao.findRoleByName(roleName)
     }
 
+    fun getRoleByRoleId(roleId: Long): RoleDto {
+        val role = roleDao.findByRoleId(roleId) ?: throw RoleNotFoundException(roleId)
+        val permissions = permissionService.getPermissionsNamesByRoleName(checkNotNull(role.name))
+        return role.toRoleDto(permissions)
+    }
+
     fun getByUserId(userId: Long): Set<String> {
         return roleDao.findByUserId(userId).mapNotNull { it.name }.toSet()
     }
@@ -88,6 +94,7 @@ class RoleService(
         return roleDao.deleteRolesFromUserByRolesIds(rolesIds, userId)
     }
 
+    @Transactional
     fun getAll(pageNumber: Int): List<RoleDto> {
         return roleDao.findAll(pageNumber, pageSize).map { role ->
             val permissions = permissionService.getPermissionsNamesByRoleName(checkNotNull(role.name))

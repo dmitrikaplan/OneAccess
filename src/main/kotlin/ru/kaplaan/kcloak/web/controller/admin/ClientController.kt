@@ -32,7 +32,7 @@ class ClientController(
     }
 
     @PutMapping("/{clientId}")
-    @PreAuthorize("hasAuthority('WRITE_USERS')")
+    @PreAuthorize("hasAuthority('WRITE_CLIENTS')")
     fun updateClient(@RequestBody @Validated client: OneAccessClient, @PathVariable clientId: String): ClientDto {
         return clientService.update(client, clientId)
     }

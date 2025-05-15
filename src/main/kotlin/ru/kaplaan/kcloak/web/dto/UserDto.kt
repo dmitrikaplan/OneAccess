@@ -7,4 +7,5 @@ data class UserDto(
     val enabled: Boolean,
     val firstName: String,
     val lastName: String,
+    val roles: Set<String>
 )

@@ -85,4 +85,10 @@ class RoleDao(
             .where(ROLE_USER.ROLE_ID.`in`(rolesIds).and(ROLE_USER.USER_ID.eq(userId)))
             .execute()
     }
+
+    fun findByRoleId(roleId: Long): RoleRecord? {
+        return db.selectFrom(ROLE)
+            .where(ROLE.ID.eq(roleId))
+            .fetchOneInto(RoleRecord::class.java)
+    }
 }

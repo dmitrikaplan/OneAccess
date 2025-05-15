@@ -15,25 +15,25 @@ class UserController(
 ) {
 
     @GetMapping("/{userId}")
-    @PreAuthorize("hasRole('READ_USERS')")
+    @PreAuthorize("hasAuthority('READ_USERS')")
     fun getUserById(@PathVariable userId: Long): UserDto {
         return userService.getByUserId(userId)
     }
 
     @GetMapping("/all/{pageNumber}")
-    @PreAuthorize("hasRole('READ_USERS')")
+    @PreAuthorize("hasAuthority('READ_USERS')")
     fun getAllUsers(@Valid @Min(1) @PathVariable pageNumber: Int): List<UserDto> {
         return userService.getAll(pageNumber)
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('WRITE_USERS')")
+    @PreAuthorize("hasAuthority('WRITE_USERS')")
     fun createUser(@Valid @RequestBody user: OneAccessUser): UserDto {
         return userService.create(user)
     }
 
     @PutMapping("/{userId}")
-    @PreAuthorize("hasAnyRole('WRITE_USERS')")
+    @PreAuthorize("hasAuthority('WRITE_USERS')")
     fun updateUser(@Valid @RequestBody user: OneAccessUser, @PathVariable userId: Long): UserDto {
         return userService.update(user, userId)
     }

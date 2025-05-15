@@ -42,7 +42,7 @@ fun UsersRecord.toUser(permissions: Set<String>, roles: Set<String>): User {
     )
 }
 
-fun UsersRecord.toUserDto(): UserDto {
+fun UsersRecord.toUserDto(roles: Set<String>): UserDto {
     return UserDto(
         id = checkNotNull(this.id),
         username = checkNotNull(this.username),
@@ -50,5 +50,6 @@ fun UsersRecord.toUserDto(): UserDto {
         enabled = checkNotNull(this.enabled),
         firstName = checkNotNull(this.firstName),
         lastName = checkNotNull(this.lastName),
+        roles = roles
     )
 }

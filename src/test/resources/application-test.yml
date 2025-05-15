@@ -17,7 +17,6 @@ server:
     session:
       persistent: false
       timeout: 30m
-#      cookie:
-#        http-only: true
-#        same-site: lax
-#        secure: false
+logging:
+  level:
+    org.springframework.security: TRACE

@@ -29,6 +29,7 @@ class RealmConfigurationIt : TestIt() {
                 enabled = true,
                 firstName = "super",
                 lastName = "admin",
+                roles = hashSetOf("SADMIN")
             ),
             UserDto(
                 id = 0,
@@ -37,6 +38,7 @@ class RealmConfigurationIt : TestIt() {
                 enabled = true,
                 firstName = "user1",
                 lastName = "test1",
+                roles = hashSetOf("USER")
             ),
             UserDto(
                 id = 0,
@@ -44,7 +46,8 @@ class RealmConfigurationIt : TestIt() {
                 email = "user2@test1.com",
                 enabled = true,
                 firstName = "user2",
-                lastName = "test1"
+                lastName = "test1",
+                roles = hashSetOf("USER")
             )
         )
         val actualUsers = getAllUsers()

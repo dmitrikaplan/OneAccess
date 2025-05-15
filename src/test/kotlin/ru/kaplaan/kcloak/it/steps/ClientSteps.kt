@@ -9,58 +9,55 @@ import org.springframework.http.MediaType
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf
 import org.springframework.stereotype.Component
 import org.springframework.test.web.servlet.*
-import ru.kaplaan.kcloak.config.properties.OneAccessUser
-import ru.kaplaan.kcloak.web.dto.UserDto
+import ru.kaplaan.kcloak.config.properties.OneAccessClient
+import ru.kaplaan.kcloak.web.dto.ClientDto
 
 @Component
-class UserSteps(
+class ClientSteps(
     private val mockMvc: MockMvc,
     private val objectMapper: ObjectMapper,
 ) {
 
-    fun findUser(cookie: Cookie?, userId: Long, httpStatus: HttpStatus): UserDto? {
-        return mockMvc.get("/admin/users/${userId}") {
+    fun findClient(cookie: Cookie?, clientId: Long, httpStatus: HttpStatus): ClientDto? {
+        return mockMvc.get("/admin/clients/${clientId}") {
             if (cookie != null) {
                 cookie(cookie)
             }
-        }
-            .chooseState<UserDto>(httpStatus)
+        }.chooseState<ClientDto>(httpStatus)
     }
 
-
-    fun getAllUsers(cookie: Cookie?, httpStatus: HttpStatus, pageNumber: Int = 1): List<UserDto> {
-        return mockMvc.get("/admin/users/all/$pageNumber") {
-            if (cookie != null)
+    fun getAllClients(cookie: Cookie?, httpStatus: HttpStatus, pageNumber: Int = 1): List<ClientDto> {
+        return mockMvc.get("/admin/clients/all/$pageNumber") {
+            if (cookie != null) {
                 cookie(cookie)
-        }
-            .chooseState<List<UserDto>>(httpStatus) ?: listOf()
+            }
+        }.chooseState<List<ClientDto>>(httpStatus) ?: listOf()
     }
 
-    fun createUser(cookie: Cookie?, oneAccessUser: OneAccessUser, httpStatus: HttpStatus): UserDto? {
-        return mockMvc.post("/admin/users") {
+    fun createClient(cookie: Cookie?, oneAccessClient: OneAccessClient, httpStatus: HttpStatus): ClientDto? {
+        return mockMvc.post("/admin/clients") {
             if (cookie != null) cookie(cookie)
 
-            content = objectMapper.writeValueAsString(oneAccessUser)
+            content = objectMapper.writeValueAsString(oneAccessClient)
             contentType = MediaType.APPLICATION_JSON
             with(csrf())
-        }.chooseState<UserDto>(httpStatus)
+        }.chooseState<ClientDto>(httpStatus)
     }
 
-    fun updateUser(
+    fun updateClient(
         cookie: Cookie?,
-        oneAccessUser: OneAccessUser,
-        userId: Long,
+        oneAccessClient: OneAccessClient,
+        clientId: String,
         httpStatus: HttpStatus,
-    ): UserDto? {
-        return mockMvc.put("/admin/users/$userId") {
+    ): ClientDto? {
+        return mockMvc.put("/admin/clients/$clientId") {
             if (cookie != null) cookie(cookie)
 
-            content = objectMapper.writeValueAsString(oneAccessUser)
+            content = objectMapper.writeValueAsString(oneAccessClient)
             contentType = MediaType.APPLICATION_JSON
             with(csrf())
-        }.chooseState<UserDto>(httpStatus)
+        }.chooseState<ClientDto>(httpStatus)
     }
-
 
     private inline fun <reified T> ResultActionsDsl.chooseState(statusCode: HttpStatusCode): T? {
         return when (statusCode) {
@@ -75,11 +72,9 @@ class UserSteps(
             status {
                 isOk()
             }
+        }.andReturn().let {
+            objectMapper.readValue<T>(it.response.contentAsString)
         }
-            .andReturn()
-            .let {
-                objectMapper.readValue<T>(it.response.contentAsString)
-            }
     }
 
     private inline fun <reified T> ResultActionsDsl.failedRequest(): T? {
@@ -91,5 +86,4 @@ class UserSteps(
 
         return null
     }
-
 }

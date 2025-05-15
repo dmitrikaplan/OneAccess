@@ -41,16 +41,8 @@ fun OneAccessClient.toRegisteredClient(): RegisteredClient =
                 it.scope(scope.value)
             }
         }
-        .also {
-            if(clientSettings != null) {
-                it.clientSettings(clientSettings.toClientSettings())
-            }
-        }
-        .also {
-            if(tokenSettings != null){
-                it.tokenSettings(tokenSettings.toTokenSettings())
-            }
-        }
+        .clientSettings(clientSettings.toClientSettings())
+        .tokenSettings(tokenSettings.toTokenSettings())
         .build()
 
 

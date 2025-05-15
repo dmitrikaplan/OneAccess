@@ -1,5 +1,6 @@
 package ru.kaplaan.kcloak.config.properties
 
+import jakarta.validation.constraints.NotEmpty
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.security.oauth2.core.AuthorizationGrantType
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod
@@ -25,6 +26,7 @@ data class OneAccessUser(
 )
 
 data class OneAccessRole(
+    @field:NotEmpty
     val name: String,
     val permissions: Set<String> = setOf(),
 )
@@ -43,13 +45,12 @@ data class OneAccessClient(
     val tokenSettings: OneAccessTokenSettings = OneAccessTokenSettings(),
 )
 
-
 data class OneAccessClientSettings(
     val requireAuthorizationConsent: Boolean = false,
     val requireProofKey: Boolean = false,
 )
 
-class OneAccessTokenSettings(
+data class OneAccessTokenSettings(
     val accessTokenLifespan: Duration = Duration.ofMinutes(15),
     val refreshTokenLifespan: Duration = Duration.ofMinutes(60),
     val authorizationCodeLifespan: Duration = Duration.ofMinutes(15),

@@ -1,14 +1,12 @@
 package ru.kaplaan.kcloak.it.tests
 
 import org.junit.Test
-import org.springframework.security.test.context.support.WithMockUser
 import ru.kaplaan.kcloak.it.core.creds.ClientCredentials
 import ru.kaplaan.kcloak.it.core.TestIt
 import ru.kaplaan.kcloak.it.core.creds.UserCredentials
 import ru.kaplaan.kcloak.it.core.randomPassword
 import ru.kaplaan.kcloak.it.core.randomUri
-import ru.kaplaan.kcloak.it.core.randomUsername
-import kotlin.test.assertNotNull
+import ru.kaplaan.kcloak.it.core.randomName
 
 class FlowsIT: TestIt() {
 
@@ -21,7 +19,7 @@ class FlowsIT: TestIt() {
 
     @Test
     fun `failed login via client credentials flow`() = testIt {
-        loginViaClientCredentials(ClientCredentials(randomUsername(), randomPassword(), randomUri()), errorExpected = true)
+        loginViaClientCredentials(ClientCredentials(randomName(), randomPassword(), randomUri()), errorExpected = true)
         assertAccessTokenNull()
     }
 
