@@ -7,11 +7,12 @@ import ru.kaplaan.kcloak.it.core.oidc.AuthorizationFlow
 import ru.kaplaan.kcloak.web.dto.ClientDto
 import ru.kaplaan.kcloak.web.dto.RoleDto
 import ru.kaplaan.kcloak.web.dto.User
+import ru.kaplaan.kcloak.web.dto.UserDto
 
 
 interface TestItContext {
 
-    fun getAllUsers(): Collection<User>
+    fun getAllUsers(): List<UserDto>
 
     fun getAllClients(): Collection<ClientDto>
 
@@ -19,7 +20,11 @@ interface TestItContext {
 
     fun loginViaClientCredentials(clientCredentials: ClientCredentials, errorExpected: Boolean = false)
 
-    fun loginViaAuthorizationCodeFlow(clientCredentials: ClientCredentials, userCredentials: UserCredentials)
+    fun loginViaAuthorizationCodeFlow(clientCredentials: ClientCredentials)
+
+    fun login(userCredentials: UserCredentials, expectedError: Boolean = false)
+
+    fun logout()
 
     fun getOpenIdConfiguration(): OidcProviderConfiguration
 

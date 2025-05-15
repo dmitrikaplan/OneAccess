@@ -9,3 +9,7 @@ fun randomUsername(): String {
 fun randomPassword(): String {
     return randomAlphanumeric(20)
 }
+
+fun randomUri(): String {
+    return "http://localhost:5000"
+}

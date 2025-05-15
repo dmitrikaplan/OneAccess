@@ -12,6 +12,7 @@ import ru.kaplaan.kcloak.it.steps.UserSteps
 import ru.kaplaan.kcloak.web.dto.ClientDto
 import ru.kaplaan.kcloak.web.dto.RoleDto
 import ru.kaplaan.kcloak.web.dto.User
+import ru.kaplaan.kcloak.web.dto.UserDto
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
@@ -28,38 +29,36 @@ class TestItContextImpl : TestItContext {
 
     private var cookie: Cookie? = null
 
-    override fun getAllUsers(): Collection<User> {
-        return userSteps.findAllUsers(checkNotNull(accessToken))
+    override fun getAllUsers(): List<UserDto> {
+        return userSteps.findAllUsers(checkNotNull(cookie))
     }
 
     override fun getAllClients(): Collection<ClientDto> {
-        return userSteps.getAllClients(checkNotNull(accessToken))
+        return userSteps.getAllClients(checkNotNull(cookie))
     }
 
     override fun getAllRoles(): Collection<RoleDto> {
-        return userSteps.getAllRoles(checkNotNull(accessToken))
+        return userSteps.getAllRoles(checkNotNull(cookie))
     }
 
     override fun loginViaClientCredentials(clientCredentials: ClientCredentials, errorExpected: Boolean) {
         accessToken = oidcSteps.loginViaClientCredentials(clientCredentials, errorExpected)
     }
 
-    override fun loginViaAuthorizationCodeFlow(clientCredentials: ClientCredentials, userCredentials: UserCredentials) {
-        accessToken = oidcSteps.loginViaAuthorizationCodeFlow(clientCredentials)
+    override fun loginViaAuthorizationCodeFlow(clientCredentials: ClientCredentials) {
+        accessToken = oidcSteps.loginViaAuthorizationCodeFlow(clientCredentials, checkNotNull(cookie))
     }
 
-//    override fun login(
-//        clientCredentials: ClientCredentials,
-//        userCredentials: UserCredentials,
-//        authorizationFlow: AuthorizationFlow,
-//    ) {
-//        when(authorizationFlow){
-//            AuthorizationFlow.AUTHORIZATION_CODE -> loginViaAuthorizationCodeFlow(clientCredentials, userCredentials)
-//            AuthorizationFlow.PASSWORD -> TODO()
-//            AuthorizationFlow.REFRESH_TOKEN -> TODO()
-//            AuthorizationFlow.CLIENT_CREDENTIALS -> loginViaClientCredentials(clientCredentials)
-//        }
-//    }
+    override fun login(
+        userCredentials: UserCredentials,
+        expectedError: Boolean
+    ) {
+        cookie = userSteps.login(userCredentials)
+    }
+
+    override fun logout() {
+        cookie = null
+    }
 
 
     override fun getOpenIdConfiguration(): OidcProviderConfiguration {
@@ -75,6 +74,6 @@ class TestItContextImpl : TestItContext {
     }
 
     override fun assertIsAuthorized() {
-        userSteps.assertCookieNotNull()
+        assertNotNull(cookie)
     }
 }

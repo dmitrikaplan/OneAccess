@@ -11,7 +11,7 @@ import ru.kaplaan.kcloak.jooq.tables.references.ROLE_USER
 
 @Component
 class RoleDao(
-    private val db: DSLContext
+    private val db: DSLContext,
 ) {
 
     fun saveRole(role: RoleRecord): RoleRecord? {
@@ -22,10 +22,12 @@ class RoleDao(
     }
 
     fun saveAllRoleUser(roleUsers: Set<RoleUserRecord>) {
-        db.insertInto(ROLE_USER)
-            .set(roleUsers)
-            .onConflictDoNothing()
-            .execute()
+        roleUsers.forEach {
+            db.insertInto(ROLE_USER)
+                .set(it)
+                .onConflictDoNothing()
+                .execute()
+        }
     }
 
     fun getRoleIdsByRoleNames(roleNames: Set<String>): List<Long> {
@@ -55,6 +57,13 @@ class RoleDao(
             .fetchInto(RoleRecord::class.java)
     }
 
+    fun getRolesIdsByUserId(userId: Long): List<Long> {
+        return db.select(ROLE_USER.ROLE_ID)
+            .from(ROLE_USER)
+            .where(ROLE_USER.USER_ID.eq(userId))
+            .fetchInto(Long::class.java)
+    }
+
     fun findAll(pageNumber: Int, pageSize: Int): List<RoleRecord> {
         return db.select(ROLE.ID, ROLE.NAME)
             .from(ROLE)
@@ -69,5 +78,11 @@ class RoleDao(
             .where(ROLE.ID.eq(roleId))
             .returning()
             .fetchOneInto(RoleRecord::class.java)
+    }
+
+    fun deleteRolesFromUserByRolesIds(rolesIds: Set<Long>, userId: Long) {
+        db.deleteFrom(ROLE_USER)
+            .where(ROLE_USER.ROLE_ID.`in`(rolesIds).and(ROLE_USER.USER_ID.eq(userId)))
+            .execute()
     }
 }

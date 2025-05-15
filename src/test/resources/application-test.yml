@@ -11,3 +11,13 @@ spring:
     username: postgres
     password: postgres
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+
+server:
+  servlet:
+    session:
+      persistent: false
+      timeout: 30m
+#      cookie:
+#        http-only: true
+#        same-site: lax
+#        secure: false

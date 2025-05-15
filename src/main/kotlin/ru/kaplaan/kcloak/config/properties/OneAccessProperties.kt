@@ -3,6 +3,7 @@ package ru.kaplaan.kcloak.config.properties
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.security.oauth2.core.AuthorizationGrantType
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod
+import org.springframework.security.oauth2.server.authorization.settings.TokenSettings
 import java.time.Duration
 import java.time.Instant
 
@@ -25,7 +26,7 @@ data class OneAccessUser(
 
 data class OneAccessRole(
     val name: String,
-    val permissions: Set<String>,
+    val permissions: Set<String> = setOf(),
 )
 
 data class OneAccessClient(
@@ -38,14 +39,14 @@ data class OneAccessClient(
     val redirectUris: Set<String>,
     val postLogoutRedirectUris: Set<String> = setOf(),
     val scopes: Set<SupportedScopes> = setOf(),
-    val clientSettings: OneAccessClientSettings?,
-    val tokenSettings: OneAccessTokenSettings?,
+    val clientSettings: OneAccessClientSettings = OneAccessClientSettings(),
+    val tokenSettings: OneAccessTokenSettings = OneAccessTokenSettings(),
 )
 
 
 data class OneAccessClientSettings(
-    val requireAuthorizationConsent: Boolean,
-    val requireProofKey: Boolean,
+    val requireAuthorizationConsent: Boolean = false,
+    val requireProofKey: Boolean = false,
 )
 
 class OneAccessTokenSettings(

@@ -7,21 +7,23 @@ import ru.kaplaan.kcloak.jooq.tables.records.RolePermissionRecord
 
 @Service
 class PermissionService(
-    private val permissionDao: PermissionDao
+    private val permissionDao: PermissionDao,
 ) {
 
     @Transactional
     fun updateRolePermissions(permissions: Set<String>, roleId: Long) {
-        val permissionsIds = permissionDao.getPermissionIdsByPermissionNames(permissions)
-        val rolesToPermission = permissionsIds.map { permissionId ->
+        val newPermissionsIds = permissionDao.getPermissionIdsByPermissionNames(permissions).toSet()
+        val actualPermissionsIds = getPermissionsIdsByRoleId(roleId).toSet()
+        val permissionsToRoleMapToDelete = newPermissionsIds - actualPermissionsIds
+        deletePermissionsFromRoleByPermissionIds(permissionsToRoleMapToDelete, roleId)
+
+        val rolesToPermission = newPermissionsIds.map { permissionId ->
             RolePermissionRecord().apply {
                 this.roleId = roleId
                 this.permissionId = permissionId
             }
         }.toSet()
 
-        val permissionsToRoleMapToDelete = getPermissionsIdsByRoleId(roleId) - permissionsIds.toSet()
-        deletePermissionsFromRole(permissionsToRoleMapToDelete.toSet())
         permissionDao.saveAllRolePermission(rolesToPermission)
     }
 
@@ -33,7 +35,7 @@ class PermissionService(
         return permissionDao.getByRoleName(roleName).toSet()
     }
 
-    private fun deletePermissionsFromRole(permissionsIds: Set<Long>) {
-        permissionDao.deletePermissionsFromRole(permissionsIds)
+    private fun deletePermissionsFromRoleByPermissionIds(permissionsIds: Set<Long>, roleId: Long) {
+        permissionDao.deletePermissionsFromRole(permissionsIds, roleId)
     }
 }

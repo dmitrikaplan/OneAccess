@@ -44,7 +44,7 @@ class UserService(
 
         val userRecord = oneAccessUser.toRecord()
         val savedUser = checkNotNull(userDao.create(userRecord))
-        roleService.bindRolesToUser(oneAccessUser.roles, checkNotNull(savedUser.id))
+        roleService.updateUserRoles(oneAccessUser.roles, checkNotNull(savedUser.id))
 
         return savedUser.toUserDto()
     }
@@ -52,7 +52,7 @@ class UserService(
     fun update(user: OneAccessUser, userId: Long): UserDto {
         val userRecord = user.toRecord()
         val savedUser = checkNotNull(userDao.update(userRecord, userId))
-        roleService.bindRolesToUser(user.roles, userId)
+        roleService.updateUserRoles(user.roles, userId)
         return savedUser.toUserDto()
     }
 

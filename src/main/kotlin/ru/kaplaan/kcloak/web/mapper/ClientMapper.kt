@@ -81,7 +81,7 @@ fun RegisteredClient.toClient(): ClientDto {
         redirectUris = redirectUris,
         scopes = SupportedScopes.fromString(scopes),
         postLogoutRedirectUris = postLogoutRedirectUris,
-        clientSettings = clientSettings,
-        tokenSettings = tokenSettings,
+        clientSettings = clientSettings.toOneAccessClientSettings(),
+        tokenSettings = tokenSettings.toOneAccessTokenSettings(),
     )
 }

@@ -29,11 +29,13 @@ class PermissionDao(
     }
 
 
-    fun saveAllRolePermission(rolePermissions: Set<RolePermissionRecord>) {
-        db.insertInto(ROLE_PERMISSION)
-            .set(rolePermissions)
-            .onConflictDoNothing()
-            .execute()
+    fun saveAllRolePermission(rolePermissions: Set<RolePermissionRecord>): Int {
+        return rolePermissions.map {
+            db.insertInto(ROLE_PERMISSION)
+                .set(it)
+                .onConflictDoNothing()
+                .execute()
+        }.size
     }
 
 
@@ -46,9 +48,9 @@ class PermissionDao(
             .fetchInto(String::class.java)
     }
 
-    fun deletePermissionsFromRole(permissionsIds: Set<Long>) {
+    fun deletePermissionsFromRole(permissionsIds: Set<Long>, roleId: Long) {
         db.deleteFrom(ROLE_PERMISSION)
-            .where(ROLE_PERMISSION.PERMISSION_ID.`in`(permissionsIds))
+            .where(ROLE_PERMISSION.PERMISSION_ID.`in`(permissionsIds).and(ROLE_PERMISSION.ROLE_ID.eq(roleId)))
             .execute()
     }
 

@@ -52,9 +52,13 @@ class RoleService(
     }
 
     @Transactional
-    fun bindRolesToUser(roles: Set<String>, userId: Long) {
-        val rolesIds = roleDao.getRoleIdsByRoleNames(roles)
-        val rolesToUser = rolesIds.map { roleId ->
+    fun updateUserRoles(roles: Set<String>, userId: Long) {
+        val newRolesIds = getRoleIdsByRoleNames(roles)
+        val actualRolesIds = getRolesIdsByUserId(userId)
+        val rolesToUserMapToDelete = actualRolesIds - newRolesIds
+        deleteRolesFromUserByRolesIds(rolesToUserMapToDelete, userId)
+
+        val rolesToUser = newRolesIds.map { roleId ->
             RoleUserRecord().apply {
                 this.roleId = roleId
                 this.userId = userId
@@ -70,6 +74,18 @@ class RoleService(
 
     fun getByUserId(userId: Long): Set<String> {
         return roleDao.findByUserId(userId).mapNotNull { it.name }.toSet()
+    }
+
+    fun getRoleIdsByRoleNames(roles: Set<String>): Set<Long> {
+        return roleDao.getRoleIdsByRoleNames(roles).toSet()
+    }
+
+    fun getRolesIdsByUserId(userId: Long): Set<Long> {
+        return roleDao.getRolesIdsByUserId(userId).toSet()
+    }
+
+    fun deleteRolesFromUserByRolesIds(rolesIds: Set<Long>, userId: Long) {
+        return roleDao.deleteRolesFromUserByRolesIds(rolesIds, userId)
     }
 
     fun getAll(pageNumber: Int): List<RoleDto> {

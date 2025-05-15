@@ -2,6 +2,7 @@ package ru.kaplaan.kcloak.it.steps
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import jakarta.servlet.http.Cookie
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Assert.assertTrue
 import org.springframework.http.HttpHeaders
@@ -27,17 +28,19 @@ class OidcSteps(
     private val objectMapper: ObjectMapper,
 ) {
 
-    fun loginViaAuthorizationCodeFlow(clientCredentials: ClientCredentials, errorExpected: Boolean = false): AccessTokenResponse? {
+    fun loginViaAuthorizationCodeFlow(clientCredentials: ClientCredentials, cookie: Cookie, errorExpected: Boolean = false): AccessTokenResponse? {
 
         val uri = UriComponentsBuilder.fromPath("/authorize")
             .queryParam("scope", OidcScopes.OPENID)
             .queryParam("response_type", "code")
             .queryParam("client_id", clientCredentials.clientId)
-            .queryParam("redirect_uri", "http://localhost:5000/code")
+            .queryParam("redirect_uri", clientCredentials.redirectUri)
             .build()
             .toUriString()
 
-        val redirectUri = mockMvc.get(uri)
+        val redirectUri = mockMvc.get(uri){
+            cookie(cookie)
+        }
             .andExpect {
                 status {
                     is3xxRedirection()
@@ -51,7 +54,7 @@ class OidcSteps(
 
 
 
-        assertThat(redirectUri).contains("http://localhost:5000/code?code=")
+        assertThat(redirectUri).contains("${clientCredentials.redirectUri}?code=")
 
         val queryParams =
             UriComponentsBuilder.fromUriString(redirectUri).build().queryParams
@@ -66,7 +69,7 @@ class OidcSteps(
             param("grant_type", "authorization_code")
             param("scope", OidcScopes.OPENID)
             param("code", authorizationCode)
-            param("redirect_uri", "http://localhost:5000")
+            param("redirect_uri", clientCredentials.redirectUri)
             header("Authorization", basicAuth)
             contentType = MediaType.APPLICATION_FORM_URLENCODED
         }.andExpect {
@@ -107,7 +110,7 @@ class OidcSteps(
         return mockMvc.post("/token") {
             param("grant_type", "client_credentials")
             param("scope", "openid")
-            param("redirect_uri", "http://localhost:5000")
+            param("redirect_uri", clientCredentials.redirectUri)
             header("Authorization", basicAuth)
             contentType = MediaType.APPLICATION_FORM_URLENCODED
         }

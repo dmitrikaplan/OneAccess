@@ -7,7 +7,7 @@ one-access:
       last-name: admin
       password: superadmin
       roles:
-        - sadmin
+        - SADMIN
 
     - username: user1-test1
       email: user1@test1.com
@@ -16,7 +16,7 @@ one-access:
       last-name: test1
       password: 123
       roles:
-        - user
+        - USER
 
     - username: user2-test1
       email: user2@test1.com
@@ -28,13 +28,18 @@ one-access:
         - user
 
   roles:
-    - name: sadmin
+    - name: SADMIN
       permissions:
-        - READ_REALM_USERS
-        - WRITE_REALM_USERS
-    - name: user
-      permissions:
-        - USER
+        - READ_USERS
+        - WRITE_USERS
+        - READ_CLIENTS
+        - WRITE_CLIENTS
+        - READ_SETTINGS
+        - WRITE_SETTINGS
+        - WRITE_ROLES
+        - READ_ROLES
+
+    - name: USER
 
   clients:
     - client-id: "client1"
@@ -49,12 +54,9 @@ one-access:
         - value: refresh_token
         - value: client_credentials
       redirect-uris:
-        - "http://localhost:8080/"
+        - "http://localhost:5000"
       post-logout-redirect-uris:
-        - "http://127.0.0.1:8080/"
-      client-settings:
-        require-authorization-consent: false
-        require-proof-key: false
+        - "http://localhost:5000"
       scopes:
         - OPENID
         - PROFILE
@@ -70,6 +72,6 @@ one-access:
         - value: refresh_token
         - value: client_credentials
       redirect-uris:
-        - "http://localhost:5000/code"
+        - "http://localhost:5000"
       scopes:
         - OPENID

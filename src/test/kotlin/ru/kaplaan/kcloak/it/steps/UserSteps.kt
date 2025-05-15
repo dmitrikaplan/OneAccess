@@ -14,6 +14,7 @@ import ru.kaplaan.kcloak.it.core.creds.UserCredentials
 import ru.kaplaan.kcloak.web.dto.ClientDto
 import ru.kaplaan.kcloak.web.dto.RoleDto
 import ru.kaplaan.kcloak.web.dto.User
+import ru.kaplaan.kcloak.web.dto.UserDto
 
 
 @Service
@@ -22,24 +23,29 @@ class UserSteps(
     private val objectMapper: ObjectMapper,
 ) {
 
-    private var cookie: Cookie? = null
 
-    fun login(userCredentials: UserCredentials) {
-        mockMvc.post("/login") {
+    fun login(userCredentials: UserCredentials): Cookie {
+        return mockMvc.post("/login") {
             param("username", userCredentials.email)
             param("password", userCredentials.password)
             with(csrf())
         }.andExpect {
             status {
-                is3xxRedirection()
+                isOk()
             }
-        }
+            cookie {
+                exists("SESSION")
+            }
+        }.andReturn()
+            .let {
+                checkNotNull(it.response.getCookie("SESSION"))
+            }
+
     }
 
-    fun findAllUsers(accessToken: AccessTokenResponse, pageNumber: Int = 1): List<User> {
+    fun findAllUsers(cookie: Cookie, pageNumber: Int = 1): List<UserDto> {
         return mockMvc.get("/admin/users/all/$pageNumber") {
-            cookie(checkNotNull(cookie))
-            header("Authorization", accessToken.tokenType + " " + accessToken.tokenValue)
+            cookie(cookie)
         }
             .andExpectAll {
                 status {
@@ -47,14 +53,13 @@ class UserSteps(
                 }
             }.andReturn()
             .let {
-                objectMapper.readValue<List<User>>(it.response.contentAsString)
+                objectMapper.readValue<List<UserDto>>(it.response.contentAsString)
             }
     }
 
-    fun getAllClients(accessToken: AccessTokenResponse, pageNumber: Int = 1): List<ClientDto> {
+    fun getAllClients(cookie: Cookie, pageNumber: Int = 1): List<ClientDto> {
         return mockMvc.get("/admin/clients/all/$pageNumber") {
-            cookie(checkNotNull(cookie))
-            header("Authorization", accessToken.tokenType + " " + accessToken.tokenValue)
+            cookie(cookie)
         }
             .andExpect {
                 status {
@@ -67,10 +72,9 @@ class UserSteps(
     }
 
 
-    fun getAllRoles(accessToken: AccessTokenResponse, pageNumber: Int = 1): List<RoleDto> {
+    fun getAllRoles(cookie: Cookie, pageNumber: Int = 1): List<RoleDto> {
         return mockMvc.get("/admin/roles/all/$pageNumber") {
-            cookie(checkNotNull(cookie))
-            header("Authorization", accessToken.tokenType + " " + accessToken.tokenValue)
+            cookie(cookie)
         }
             .andExpect {
                 status {
@@ -82,7 +86,4 @@ class UserSteps(
             }
     }
 
-    fun assertCookieNotNull() {
-        assertNotNull(cookie)
-    }
 }

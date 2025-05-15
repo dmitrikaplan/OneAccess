@@ -2,13 +2,12 @@ package ru.kaplaan.kcloak.it.tests
 
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.springframework.security.oauth2.core.AuthorizationGrantType
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod
+import ru.kaplaan.kcloak.config.properties.OneAccessClientSettings
+import ru.kaplaan.kcloak.config.properties.OneAccessTokenSettings
 import ru.kaplaan.kcloak.config.properties.SupportedScopes
-import ru.kaplaan.kcloak.it.core.creds.ClientCredentials
 import ru.kaplaan.kcloak.it.core.TestIt
 import ru.kaplaan.kcloak.it.core.creds.UserCredentials
 import ru.kaplaan.kcloak.web.dto.ClientDto
@@ -20,7 +19,7 @@ class RealmConfigurationIt : TestIt() {
 
     @Test
     fun `users from api equals users from realm configuration`() = testIt {
-        //login(UserCredentials.SADMIN)
+        login(UserCredentials.SADMIN)
         assertIsAuthorized()
         val expectedUsers = listOf(
             UserDto(
@@ -57,62 +56,77 @@ class RealmConfigurationIt : TestIt() {
 
     @Test
     fun `clients from api equals clients from configuration`() = testIt {
-        val expectedClientDto =
+        login(UserCredentials.SADMIN)
+        val expectedClientsDto = listOf(
             ClientDto(
-                clientId = "default",
-                clientSecret = "secret",
+                clientId = "client1",
+                clientSecret = "client1secret",
                 clientName = "test-client",
-                clientAuthenticationMethods = setOf(ClientAuthenticationMethod.CLIENT_SECRET_JWT),
-                authorizationGrantTypes = setOf(AuthorizationGrantType.AUTHORIZATION_CODE),
-                redirectUris = setOf("http://localhost:5000"),
-                scopes = setOf(SupportedScopes.OPENID, SupportedScopes.READ, SupportedScopes.WRITE),
+                clientAuthenticationMethods = hashSetOf(
+                    ClientAuthenticationMethod.CLIENT_SECRET_POST,
+                    ClientAuthenticationMethod.CLIENT_SECRET_JWT,
+                    ClientAuthenticationMethod.CLIENT_SECRET_BASIC
+                ),
+                authorizationGrantTypes = hashSetOf(
+                    AuthorizationGrantType.AUTHORIZATION_CODE,
+                    AuthorizationGrantType.REFRESH_TOKEN,
+                    AuthorizationGrantType.CLIENT_CREDENTIALS
+                ),
+                redirectUris = hashSetOf("http://localhost:5000"),
+                scopes = hashSetOf(SupportedScopes.OPENID, SupportedScopes.PROFILE),
+                postLogoutRedirectUris = hashSetOf("http://localhost:5000"),
+                clientSettings = OneAccessClientSettings(),
+                tokenSettings = OneAccessTokenSettings()
+            ),
+            ClientDto(
+                clientId = "client2",
+                clientSecret = "test-client",
+                clientName = "Test Client",
+                clientAuthenticationMethods = hashSetOf(
+                    ClientAuthenticationMethod.CLIENT_SECRET_POST,
+                    ClientAuthenticationMethod.CLIENT_SECRET_BASIC
+                ),
+                authorizationGrantTypes = hashSetOf(
+                    AuthorizationGrantType.AUTHORIZATION_CODE,
+                    AuthorizationGrantType.REFRESH_TOKEN,
+                    AuthorizationGrantType.CLIENT_CREDENTIALS
+                ),
+                redirectUris = hashSetOf("http://localhost:5000"),
+                scopes = hashSetOf(SupportedScopes.OPENID),
+                clientSettings = OneAccessClientSettings(),
+                tokenSettings = OneAccessTokenSettings()
+
             )
+        )
 
-        val actualClient = getAllClients().first()
+        val actualClient = getAllClients()
 
-        assertEquals(expectedClientDto.clientId, actualClient.clientId)
-        assertEquals(expectedClientDto.clientSecret, actualClient.clientSecret)
-        assertEquals(expectedClientDto.clientName, actualClient.clientName)
-        assertEquals(expectedClientDto.clientAuthenticationMethods, actualClient.clientAuthenticationMethods)
-        assertEquals(expectedClientDto.authorizationGrantTypes, actualClient.authorizationGrantTypes)
-        assertEquals(expectedClientDto.redirectUris, actualClient.redirectUris)
-        assertEquals(expectedClientDto.scopes, actualClient.scopes)
+        assertThat(actualClient).usingRecursiveComparison()
+            .isEqualTo(expectedClientsDto)
 
     }
 
 
     @Test
     fun `roles from api equals roles from configuration`() = testIt {
+        login(UserCredentials.SADMIN)
         val expectedRoles = listOf(
             RoleDto(
                 roleId = 0,
-                name = "sadmin",
-                permissions = setOf("READ_REALM_USERS", "WRITE_REALM_USERS"),
+                name = "SADMIN",
+                permissions = hashSetOf("READ_USERS", "WRITE_USERS", "READ_CLIENTS", "WRITE_CLIENTS", "READ_SETTINGS", "WRITE_SETTINGS", "WRITE_ROLES", "READ_ROLES"),
             ),
             RoleDto(
                 roleId = 0,
-                name = "user",
-                permissions = setOf("USER")
+                name = "USER",
+                permissions = hashSetOf()
             )
         )
 
         val actualRoles = getAllRoles()
 
         assertThat(actualRoles).usingRecursiveComparison()
-            .ignoringFields("id")
+            .ignoringFields("roleId")
             .isEqualTo(expectedRoles);
-    }
-
-    @Test
-    fun `open id configuration`() = testIt {
-        val config = getOpenIdConfiguration()
-        println(config)
-    }
-
-
-    private fun <T> assertEquals(expected: Collection<T>, actual: Collection<T>) {
-        expected.forEach {
-            assertTrue(actual.contains(it))
-        }
     }
 }

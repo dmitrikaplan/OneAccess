@@ -6,7 +6,9 @@ import ru.kaplaan.kcloak.it.core.creds.ClientCredentials
 import ru.kaplaan.kcloak.it.core.TestIt
 import ru.kaplaan.kcloak.it.core.creds.UserCredentials
 import ru.kaplaan.kcloak.it.core.randomPassword
+import ru.kaplaan.kcloak.it.core.randomUri
 import ru.kaplaan.kcloak.it.core.randomUsername
+import kotlin.test.assertNotNull
 
 class FlowsIT: TestIt() {
 
@@ -19,14 +21,15 @@ class FlowsIT: TestIt() {
 
     @Test
     fun `failed login via client credentials flow`() = testIt {
-        loginViaClientCredentials(ClientCredentials(randomUsername(), randomPassword()), errorExpected = true)
+        loginViaClientCredentials(ClientCredentials(randomUsername(), randomPassword(), randomUri()), errorExpected = true)
         assertAccessTokenNull()
     }
 
 
     @Test
-    @WithMockUser(username = "superadmin@test1.com", password = "superadmin", authorities = ["READ_USERS"])
     fun `authorization code flow`() = testIt {
-        loginViaAuthorizationCodeFlow(ClientCredentials.CLIENT2, UserCredentials.USER1)
+        login(UserCredentials.USER1)
+        loginViaAuthorizationCodeFlow(ClientCredentials.CLIENT2)
+        assertAccessTokenNotNull()
     }
 }
