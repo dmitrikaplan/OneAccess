@@ -3,12 +3,8 @@ package ru.kaplaan.kcloak.it.tests
 import org.junit.Assert.*
 import org.junit.Test
 import org.springframework.http.HttpStatus
-import org.springframework.security.oauth2.core.AuthorizationGrantType
-import org.springframework.security.oauth2.core.ClientAuthenticationMethod
-import ru.kaplaan.kcloak.config.properties.OneAccessClient
 import ru.kaplaan.kcloak.config.properties.OneAccessRole
 import ru.kaplaan.kcloak.config.properties.OneAccessUser
-import ru.kaplaan.kcloak.config.properties.SupportedScopes
 import ru.kaplaan.kcloak.it.core.*
 import ru.kaplaan.kcloak.it.core.creds.UserCredentials
 

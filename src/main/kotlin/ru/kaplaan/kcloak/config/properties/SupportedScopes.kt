@@ -5,7 +5,7 @@ import org.springframework.security.oauth2.core.oidc.OidcScopes
 enum class SupportedScopes(val value: String) {
     READ("read"), WRITE("write"), OPENID(OidcScopes.OPENID),
     EMAIL(OidcScopes.EMAIL), PHONE(OidcScopes.PHONE), PROFILE(OidcScopes.PROFILE),
-    ADDRESS(OidcScopes.ADDRESS);
+    ADDRESS(OidcScopes.ADDRESS), OFFLINE_ACCESS("offline_access");
 
     companion object {
 

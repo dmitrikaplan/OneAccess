@@ -50,16 +50,14 @@ one-access:
         - value: client_secret_post
         - value: client_secret_basic
       authorization-grant-types:
-        - value: authorization_code
-        - value: refresh_token
-        - value: client_credentials
+        - AUTHORIZATION_CODE
+        - CLIENT_CREDENTIALS
       redirect-uris:
         - "http://localhost:5000"
       post-logout-redirect-uris:
         - "http://localhost:5000"
       scopes:
         - OPENID
-        - PROFILE
 
     - client-id: "client2"
       client-secret: "test-client"
@@ -68,9 +66,9 @@ one-access:
         - value: client_secret_post
         - value: client_secret_basic
       authorization-grant-types:
-        - value: authorization_code
-        - value: refresh_token
-        - value: client_credentials
+        - AUTHORIZATION_CODE
+        - CLIENT_CREDENTIALS
+        - REFRESH_TOKEN
       redirect-uris:
         - "http://localhost:5000"
       scopes:

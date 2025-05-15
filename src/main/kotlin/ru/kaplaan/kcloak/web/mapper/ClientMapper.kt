@@ -1,11 +1,9 @@
 package ru.kaplaan.kcloak.web.mapper
 
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient
-import org.springframework.security.oauth2.server.authorization.settings.ClientSettings
 import ru.kaplaan.kcloak.config.properties.OneAccessClient
 import ru.kaplaan.kcloak.config.properties.SupportedScopes
 import ru.kaplaan.kcloak.web.dto.ClientDto
-import java.time.Instant
 import java.util.*
 
 
@@ -23,7 +21,7 @@ fun OneAccessClient.toRegisteredClient(): RegisteredClient =
         }
         .also {
             authorizationGrantTypes.forEach { authorizationGrantType ->
-                it.authorizationGrantType(authorizationGrantType)
+                it.authorizationGrantType(authorizationGrantType.toAuthorizationGrantType())
             }
         }
         .also {
@@ -53,7 +51,7 @@ fun RegisteredClient.toOneAccessClient(): OneAccessClient {
         clientSecretExpiresAt = clientSecretExpiresAt,
         clientName = clientName,
         clientAuthenticationMethods = clientAuthenticationMethods,
-        authorizationGrantTypes = authorizationGrantTypes,
+        authorizationGrantTypes = authorizationGrantTypes.toSupportedGrantTypes(),
         redirectUris = redirectUris,
         scopes = SupportedScopes.fromString(scopes),
         postLogoutRedirectUris = postLogoutRedirectUris,
@@ -69,7 +67,7 @@ fun RegisteredClient.toClient(): ClientDto {
         clientSecretExpiresAt = clientSecretExpiresAt,
         clientName = clientName,
         clientAuthenticationMethods = clientAuthenticationMethods,
-        authorizationGrantTypes = authorizationGrantTypes,
+        authorizationGrantTypes = authorizationGrantTypes.toSupportedGrantTypes(),
         redirectUris = redirectUris,
         scopes = SupportedScopes.fromString(scopes),
         postLogoutRedirectUris = postLogoutRedirectUris,

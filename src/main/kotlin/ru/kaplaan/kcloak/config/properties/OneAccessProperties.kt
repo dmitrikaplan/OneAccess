@@ -2,9 +2,7 @@ package ru.kaplaan.kcloak.config.properties
 
 import jakarta.validation.constraints.NotEmpty
 import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.security.oauth2.core.AuthorizationGrantType
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod
-import org.springframework.security.oauth2.server.authorization.settings.TokenSettings
 import java.time.Duration
 import java.time.Instant
 
@@ -26,8 +24,7 @@ data class OneAccessUser(
 )
 
 data class OneAccessRole(
-    @field:NotEmpty
-    val name: String,
+    @field:NotEmpty val name: String,
     val permissions: Set<String> = setOf(),
 )
 
@@ -37,7 +34,7 @@ data class OneAccessClient(
     val clientSecretExpiresAt: Instant? = null,
     val clientName: String,
     val clientAuthenticationMethods: Set<ClientAuthenticationMethod>,
-    val authorizationGrantTypes: Set<AuthorizationGrantType>,
+    val authorizationGrantTypes: Set<SupportedGrantType>,
     val redirectUris: Set<String>,
     val postLogoutRedirectUris: Set<String> = setOf(),
     val scopes: Set<SupportedScopes> = setOf(),

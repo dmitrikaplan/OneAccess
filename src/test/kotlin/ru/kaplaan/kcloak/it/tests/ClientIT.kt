@@ -3,9 +3,9 @@ package ru.kaplaan.kcloak.it.tests
 import org.junit.Assert.*
 import org.junit.Test
 import org.springframework.http.HttpStatus
-import org.springframework.security.oauth2.core.AuthorizationGrantType
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod
 import ru.kaplaan.kcloak.config.properties.OneAccessClient
+import ru.kaplaan.kcloak.config.properties.SupportedGrantType
 import ru.kaplaan.kcloak.config.properties.SupportedScopes
 import ru.kaplaan.kcloak.it.core.TestIt
 import ru.kaplaan.kcloak.it.core.creds.UserCredentials
@@ -46,7 +46,7 @@ class ClientIT : TestIt() {
             clientSecret = randomUUID(),
             clientName = randomName(),
             clientAuthenticationMethods = hashSetOf(ClientAuthenticationMethod.CLIENT_SECRET_POST),
-            authorizationGrantTypes = hashSetOf(AuthorizationGrantType.AUTHORIZATION_CODE),
+            authorizationGrantTypes = hashSetOf(SupportedGrantType.AUTHORIZATION_CODE),
             redirectUris = hashSetOf("http://localhost:5000"),
             scopes = hashSetOf(SupportedScopes.OPENID)
         )
@@ -75,7 +75,7 @@ class ClientIT : TestIt() {
                 clientSecret = client.clientSecret,
                 clientName = client.clientName,
                 clientAuthenticationMethods = hashSetOf(ClientAuthenticationMethod.CLIENT_SECRET_POST),
-                authorizationGrantTypes = hashSetOf(AuthorizationGrantType.AUTHORIZATION_CODE),
+                authorizationGrantTypes = hashSetOf(SupportedGrantType.AUTHORIZATION_CODE),
                 redirectUris = hashSetOf("http://localhost:5000"),
                 scopes = newScopes
             ),
@@ -103,7 +103,7 @@ class ClientIT : TestIt() {
             clientSecret = randomUUID(),
             clientName = randomName(),
             clientAuthenticationMethods = hashSetOf(ClientAuthenticationMethod.CLIENT_SECRET_POST),
-            authorizationGrantTypes = hashSetOf(AuthorizationGrantType.AUTHORIZATION_CODE),
+            authorizationGrantTypes = hashSetOf(SupportedGrantType.AUTHORIZATION_CODE),
             redirectUris = hashSetOf("http://localhost:5000"),
             scopes = hashSetOf(SupportedScopes.OPENID)
         )

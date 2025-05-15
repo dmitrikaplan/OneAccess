@@ -3,10 +3,10 @@ package ru.kaplaan.kcloak.it.tests
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import org.springframework.security.oauth2.core.AuthorizationGrantType
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod
 import ru.kaplaan.kcloak.config.properties.OneAccessClientSettings
 import ru.kaplaan.kcloak.config.properties.OneAccessTokenSettings
+import ru.kaplaan.kcloak.config.properties.SupportedGrantType
 import ru.kaplaan.kcloak.config.properties.SupportedScopes
 import ru.kaplaan.kcloak.it.core.TestIt
 import ru.kaplaan.kcloak.it.core.creds.UserCredentials
@@ -71,12 +71,11 @@ class RealmConfigurationIt : TestIt() {
                     ClientAuthenticationMethod.CLIENT_SECRET_BASIC
                 ),
                 authorizationGrantTypes = hashSetOf(
-                    AuthorizationGrantType.AUTHORIZATION_CODE,
-                    AuthorizationGrantType.REFRESH_TOKEN,
-                    AuthorizationGrantType.CLIENT_CREDENTIALS
+                    SupportedGrantType.AUTHORIZATION_CODE,
+                    SupportedGrantType.CLIENT_CREDENTIALS
                 ),
                 redirectUris = hashSetOf("http://localhost:5000"),
-                scopes = hashSetOf(SupportedScopes.OPENID, SupportedScopes.PROFILE),
+                scopes = hashSetOf(SupportedScopes.OPENID),
                 postLogoutRedirectUris = hashSetOf("http://localhost:5000"),
                 clientSettings = OneAccessClientSettings(),
                 tokenSettings = OneAccessTokenSettings()
@@ -90,9 +89,9 @@ class RealmConfigurationIt : TestIt() {
                     ClientAuthenticationMethod.CLIENT_SECRET_BASIC
                 ),
                 authorizationGrantTypes = hashSetOf(
-                    AuthorizationGrantType.AUTHORIZATION_CODE,
-                    AuthorizationGrantType.REFRESH_TOKEN,
-                    AuthorizationGrantType.CLIENT_CREDENTIALS
+                    SupportedGrantType.AUTHORIZATION_CODE,
+                    SupportedGrantType.REFRESH_TOKEN,
+                    SupportedGrantType.CLIENT_CREDENTIALS
                 ),
                 redirectUris = hashSetOf("http://localhost:5000"),
                 scopes = hashSetOf(SupportedScopes.OPENID),
@@ -117,7 +116,16 @@ class RealmConfigurationIt : TestIt() {
             RoleDto(
                 roleId = 0,
                 name = "SADMIN",
-                permissions = hashSetOf("READ_USERS", "WRITE_USERS", "READ_CLIENTS", "WRITE_CLIENTS", "READ_SETTINGS", "WRITE_SETTINGS", "WRITE_ROLES", "READ_ROLES"),
+                permissions = hashSetOf(
+                    "READ_USERS",
+                    "WRITE_USERS",
+                    "READ_CLIENTS",
+                    "WRITE_CLIENTS",
+                    "READ_SETTINGS",
+                    "WRITE_SETTINGS",
+                    "WRITE_ROLES",
+                    "READ_ROLES"
+                ),
             ),
             RoleDto(
                 roleId = 0,

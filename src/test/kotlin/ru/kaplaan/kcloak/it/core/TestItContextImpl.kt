@@ -9,7 +9,8 @@ import ru.kaplaan.kcloak.config.properties.OneAccessRole
 import ru.kaplaan.kcloak.config.properties.OneAccessUser
 import ru.kaplaan.kcloak.it.core.creds.ClientCredentials
 import ru.kaplaan.kcloak.it.core.creds.UserCredentials
-import ru.kaplaan.kcloak.it.core.oidc.AccessTokenResponse
+import ru.kaplaan.kcloak.it.core.oidc.TokenResponse
+import ru.kaplaan.kcloak.it.core.oidc.AuthorizationCodeFlowErrorType
 import ru.kaplaan.kcloak.it.steps.*
 import ru.kaplaan.kcloak.web.dto.ClientDto
 import ru.kaplaan.kcloak.web.dto.RoleDto
@@ -35,16 +36,41 @@ class TestItContextImpl : TestItContext {
     @Autowired
     lateinit var userSteps: UserSteps
 
-    private var accessToken: AccessTokenResponse? = null
+    private var tokens: TokenResponse? = null
 
     private var cookie: Cookie? = null
 
-    override fun loginViaAuthorizationCodeFlow(clientCredentials: ClientCredentials) {
-        accessToken = oidcSteps.loginViaAuthorizationCodeFlow(clientCredentials, checkNotNull(cookie))
+    private var currentClient: ClientCredentials? = null
+
+    override fun loginViaAuthorizationCodeFlow(
+        clientCredentials: ClientCredentials,
+        authorizationCodeFlowErrorType: AuthorizationCodeFlowErrorType?,
+    ) {
+        tokens = oidcSteps.loginViaAuthorizationCodeFlow(clientCredentials, cookie, authorizationCodeFlowErrorType)
+        currentClient = clientCredentials
     }
 
-    override fun loginViaClientCredentials(clientCredentials: ClientCredentials, errorExpected: Boolean) {
-        accessToken = oidcSteps.loginViaClientCredentials(clientCredentials, errorExpected)
+    override fun loginViaPasswordFlow(
+        userCredentials: UserCredentials,
+        clientCredentials: ClientCredentials,
+        isErrorExpected: Boolean,
+    ) {
+        tokens = oidcSteps.loginViaPasswordFlow(userCredentials, clientCredentials, isErrorExpected)
+        currentClient = clientCredentials
+    }
+
+    override fun updateAccessToken(isErrorExpected: Boolean) {
+        tokens = oidcSteps.updateAccessToken(
+            checkNotNull(currentClient),
+            cookie,
+            checkNotNull(tokens?.refreshToken),
+            isErrorExpected
+        )
+    }
+
+    override fun loginViaClientCredentials(clientCredentials: ClientCredentials, isErrorExpected: Boolean) {
+        tokens = oidcSteps.loginViaClientCredentials(clientCredentials, isErrorExpected)
+        currentClient = clientCredentials
     }
 
     override fun login(
@@ -60,11 +86,19 @@ class TestItContextImpl : TestItContext {
     }
 
     override fun assertAccessTokenNotNull() {
-        assertNotNull(accessToken)
+        assertNotNull(tokens?.accessToken)
     }
 
     override fun assertAccessTokenNull() {
-        assertNull(accessToken)
+        assertNull(tokens?.accessToken)
+    }
+
+    override fun assertRefreshTokenNotNull() {
+        assertNotNull(tokens?.refreshToken)
+    }
+
+    override fun assertRefreshTokenNull() {
+        assertNull(tokens?.refreshToken)
     }
 
     override fun assertIsAuthorized() {
