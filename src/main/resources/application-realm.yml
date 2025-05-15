@@ -25,7 +25,7 @@ one-access:
       last-name: test1
       password: 123
       roles:
-        - user
+        - USER
 
   roles:
     - name: SADMIN
