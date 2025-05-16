@@ -2,6 +2,10 @@ spring:
   application:
     name: kcloak
 
+  threads:
+    virtual:
+      enabled: true
+
   flyway:
     enabled: true
     baseline-on-migrate: true
