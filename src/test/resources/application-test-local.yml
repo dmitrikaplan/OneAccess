@@ -4,3 +4,8 @@
 #    username: kcloak
 #    password: kcloak
 #    driver-class-name: org.postgresql.Driver
+
+
+#logging:
+#  level:
+#    org.springframework.security: TRACE

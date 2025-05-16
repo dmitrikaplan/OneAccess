@@ -1,6 +1,5 @@
 package ru.kaplaan.kcloak.web.dto
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
@@ -31,5 +30,9 @@ data class User(
 
     override fun getUsername(): String {
         return username
+    }
+
+    override fun isEnabled(): Boolean {
+        return enabled
     }
 }

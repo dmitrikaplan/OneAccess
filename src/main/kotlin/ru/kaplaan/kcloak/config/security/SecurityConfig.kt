@@ -18,7 +18,7 @@ import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer
 import org.springframework.security.web.SecurityFilterChain
-import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint
+import org.springframework.security.web.context.NullSecurityContextRepository
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher
 import org.springframework.security.web.util.matcher.OrRequestMatcher
 import org.springframework.session.MapSessionRepository
@@ -35,7 +35,8 @@ import java.util.concurrent.ConcurrentHashMap
 private val publicPaths = arrayOf(
     "/public/**",
     "/login",
-    "/login/**"
+    "/login/**",
+    "/actuator/**"
 )
 
 private val adminEndpoints = listOf(
@@ -54,6 +55,7 @@ class SecurityConfig {
             .authorizeHttpRequests {
                 it.anyRequest().authenticated()
             }
+            .disableStandardFilters()
             .build()
     }
 
@@ -69,6 +71,7 @@ class SecurityConfig {
             .authorizeHttpRequests {
                 it.anyRequest().authenticated()
             }
+            .disableStandardFilters()
         return http.build()
     }
 
@@ -77,7 +80,6 @@ class SecurityConfig {
     fun defaultSecurityFilterChain(http: HttpSecurity): SecurityFilterChain {
         return http.authorizeHttpRequests {
             it.requestMatchers(*publicPaths).permitAll()
-//            it.anyRequest().denyAll()
         }
             .basicSettings()
             .build()
@@ -142,6 +144,21 @@ class SecurityConfig {
             .rememberMe {
                 it.key("KEY")
                 it.tokenValiditySeconds(86400)
+            }
+    }
+
+    private fun HttpSecurity.disableStandardFilters(): HttpSecurity {
+        return httpBasic { it.disable() }
+            .csrf { it.disable() }
+            .formLogin { it.disable() }
+            .logout { it.disable() }
+            .cors { it.disable() }
+            .sessionManagement { it.disable() }
+            .requestCache { it.disable() }
+            .servletApi { it.disable() }
+            .anonymous { it.disable() }
+            .securityContext {
+                it.securityContextRepository(NullSecurityContextRepository())
             }
     }
 }

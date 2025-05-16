@@ -26,7 +26,7 @@ class ClientService(
 
     @Transactional
     fun create(client: OneAccessClient): ClientDto {
-        if(registeredClientRepository.findByClientId(client.clientId) != null)
+        if (registeredClientRepository.findByClientId(client.clientId) != null)
             throw ClientAlreadyExistsException(client.clientId)
 
         val registeredClient = client.toRegisteredClient()
@@ -37,7 +37,7 @@ class ClientService(
 
     @Transactional
     fun update(client: OneAccessClient, clientId: String): ClientDto {
-        if(registeredClientRepository.findByClientId(clientId) == null)
+        if (registeredClientRepository.findByClientId(clientId) == null)
             throw ClientNotFoundException(client.clientId)
 
         val registeredClient = client.toRegisteredClient()

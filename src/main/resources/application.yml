@@ -2,13 +2,10 @@ spring:
   application:
     name: kcloak
 
-#  flyway:
-#    enabled: true
-#    baseline-on-migrate: true
-#    locations: classpath:migrations
-#    url: jdbc:postgresql://localhost:5432/kcloak
-#    password: kcloak
-#    user: kcloak
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:migrations
 
   datasource:
     url: jdbc:postgresql://localhost:5432/kcloak
@@ -17,7 +14,16 @@ spring:
   profiles:
     active: realm
 
-logging:
-  level:
-    org.springframework.security: TRACE
-    org.springframework.security.oauth2: TRACE
+#logging:
+#  level:
+#    org.springframework.security: TRACE
+#    org.springframework.security.oauth2: TRACE
+
+server:
+  port: 8081
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
